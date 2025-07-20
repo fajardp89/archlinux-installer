@@ -6,10 +6,11 @@ DISK="/dev/nvme0n1"
 EFI_PART="${DISK}p1"
 SWAP_PART="${DISK}p2"
 ROOT_PART="${DISK}p3"
+DATA_PART="${DISK}p4"
 HOSTNAME="archlinux"
 USERNAME="fajar"
-ROOT_PASS="r!N4@O50689"     # Ganti dengan password root yang kamu inginkan
-USER_PASS="050689"    # Ganti dengan password user biasa
+ROOT_PASS="r!N4@O50689"
+USER_PASS="050689"
 
 echo "[+] Format BTRFS on $ROOT_PART"
 mkfs.btrfs -f -L ArchRoot $ROOT_PART
@@ -37,11 +38,15 @@ echo "[+] Mount EFI partition"
 mkdir -p /mnt/boot/efi
 mount $EFI_PART /mnt/boot/efi
 
+echo "[+] Mounting /data partition"
+mkdir -p /mnt/data
+mount $DATA_PART /mnt/data
+
 echo "[+] Enable swap"
 swapon $SWAP_PART
 
 echo "[+] Update mirrorlist"
-pacman -Sy reflector
+pacman -Sy reflector --noconfirm
 reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 
 echo "[+] Install base system"
