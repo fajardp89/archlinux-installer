@@ -32,17 +32,19 @@ umount /mnt
 
 echo "[+] Mounting subvolumes"
 mount -o noatime,compress=zstd,subvol=@ $ROOT_PART /mnt
-mkdir -p /mnt/{home,var/log,var/cache,var/tmp,tmp,opt,srv,var/cache/pacman/pkg,swap}
+mkdir -p /mnt/{home,var,tmp,opt,srv,swap}
 mount -o noatime,compress=zstd,subvol=@home $ROOT_PART /mnt/home
 mount -o noatime,compress=zstd,subvol=@var $ROOT_PART /mnt/var
-mount -o noatime,compress=zstd,subvol=@log $ROOT_PART /mnt/var/log
-mount -o noatime,compress=zstd,subvol=@cache $ROOT_PART /mnt/var/cache
-mount -o noatime,compress=zstd,subvol=@var_tmp $ROOT_PART /mnt/var/tmp
-mount -o noatime,compress=zstd,subvol=@pkg $ROOT_PART /mnt/var/cache/pacman/pkg
 mount -o noatime,compress=zstd,subvol=@tmp $ROOT_PART /mnt/tmp
 mount -o noatime,compress=zstd,subvol=@opt $ROOT_PART /mnt/opt
 mount -o noatime,compress=zstd,subvol=@srv $ROOT_PART /mnt/srv
 mount -o noatime,compress=zstd,subvol=@swap $ROOT_PART /mnt/swap
+mkdir -p /mnt/var/{log,cache,tmp}
+mkdir -p /mnt/var/cache/pacman
+mount -o noatime,compress=zstd,subvol=@log $ROOT_PART /mnt/var/log
+mount -o noatime,compress=zstd,subvol=@cache $ROOT_PART /mnt/var/cache
+mount -o noatime,compress=zstd,subvol=@var_tmp $ROOT_PART /mnt/var/tmp
+mount -o noatime,compress=zstd,subvol=@pkg $ROOT_PART /mnt/var/cache/pacman/pkg
 
 echo "[+] Mount EFI partition"
 mkdir -p /mnt/boot/efi
