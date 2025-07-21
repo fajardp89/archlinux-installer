@@ -32,6 +32,7 @@ install_safe \
   konsole \
   systemsettings \
   kscreen \
+  sddm \
   sddm-kcm
 
 echo "[+] Install Audio, Network, and Power Support"
