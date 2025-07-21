@@ -43,7 +43,8 @@ install_safe \
   pipewire-pulse \
   networkmanager \
   powerdevil \
-  upower
+  upower \
+  sof-firmware
 
 echo "[+] Install GPG & KWallet Support"
 install_safe \
