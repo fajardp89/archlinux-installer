@@ -44,6 +44,7 @@ install_safe \
   networkmanager \
   powerdevil \
   upower \
+  plasma-pa \
   sof-firmware
 
 echo "[+] Install GPG & KWallet Support"
