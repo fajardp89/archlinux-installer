@@ -1,11 +1,18 @@
 #!/bin/bash
 set -e
 
+install_safe() {
+  for pkg in "$@"; do
+    echo "[+] Memasang paket: $pkg"
+    sudo pacman -S --noconfirm "$pkg" || echo "[!] Gagal memasang $pkg, dilewati."
+  done
+}
+
 echo "[+] Update sistem"
 sudo pacman -Syu --noconfirm
 
 echo "[+] Install XDG/Wayland Core Dependencies"
-sudo pacman -S --noconfirm \
+install_safe \
   xorg-xwayland \
   xdg-desktop-portal \
   xdg-desktop-portal-kde \
@@ -16,7 +23,7 @@ sudo pacman -S --noconfirm \
   dbus
 
 echo "[+] Install KDE Plasma Minimal"
-sudo pacman -S --noconfirm \
+install_safe \
   plasma-desktop \
   plasma-workspace \
   plasma-nm \
@@ -28,7 +35,7 @@ sudo pacman -S --noconfirm \
   sddm-kcm
 
 echo "[+] Install Audio, Network, and Power Support"
-sudo pacman -S --noconfirm \
+install_safe \
   pipewire \
   wireplumber \
   pipewire-audio \
@@ -39,7 +46,7 @@ sudo pacman -S --noconfirm \
   upower
 
 echo "[+] Install GPG & KWallet Support"
-sudo pacman -S --noconfirm \
+install_safe \
   gnupg \
   pinentry-qt \
   kwalletmanager \
