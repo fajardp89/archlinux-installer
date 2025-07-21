@@ -4,14 +4,28 @@ set -e
 echo "[+] Update sistem"
 sudo pacman -Syu --noconfirm
 
-echo "[+] Install plasma-desktop minimal (tanpa Xorg & SDDM)"
-sudo pacman -S --noconfirm plasma-desktop
+echo "[+] Install XDG/Wayland Core Dependencies"
+sudo pacman -S --noconfirm \
+  xorg-xwayland \
+  xdg-desktop-portal \
+  xdg-desktop-portal-kde \
+  qt5-wayland qt6-wayland \
+  plasma-wayland-session \
+  wayland-utils \
+  wayland-protocols \
+  dbus
 
-echo "[+] Install Qt5 Wayland support"
-sudo pacman -S --noconfirm qt5-wayland
-
-echo "[+] Install Konsole (terminal KDE)"
-sudo pacman -S --noconfirm konsole
+echo "[+] Install KDE Plasma Minimal"
+sudo pacman -S --noconfirm \
+  plasma-desktop \
+  plasma-workspace \
+  plasma-nm \
+  kde-cli-tools \
+  dolphin \
+  konsole \
+  systemsettings \
+  kscreen \
+  sddm-kcm
 
 echo "[✓] Instalasi selesai! Sistem akan reboot dalam 5 detik..."
 sleep 5
