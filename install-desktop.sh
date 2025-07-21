@@ -84,6 +84,13 @@ makepkg -si --noconfirm
 cd /
 rm -rf /tmp/yay
 
+echo "[+] Install dan aktifkan FirewallD"
+install_safe firewalld
+
+echo "[+] Enable dan start firewalld.service"
+sudo systemctl enable firewalld.service
+sudo systemctl start firewalld.service
+
 echo "[✓] Instalasi selesai! Sistem akan reboot dalam 5 detik..."
 sleep 5
 reboot
