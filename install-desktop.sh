@@ -58,6 +58,12 @@ install_safe \
   kwallet-pam \
   gpgme
 
+echo "[+] Install Utility Tools"
+install_safe \
+  gparted \
+  dosfstools \
+  timeshift
+
 echo "[✓] Instalasi selesai! Sistem akan reboot dalam 5 detik..."
 sleep 5
 reboot
