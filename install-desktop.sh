@@ -35,6 +35,8 @@ install_safe \
   sddm \
   sddm-kcm
 
+systemctl enable sddm.service
+
 echo "[+] Install Audio, Network, and Power Support"
 install_safe \
   pipewire \
