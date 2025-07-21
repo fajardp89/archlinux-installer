@@ -83,9 +83,6 @@ makepkg -si --noconfirm
 cd /
 rm -rf /tmp/yay
 
-echo "[+] Install neofetch dari AUR"
-yay -S --noconfirm neofetch
-
 echo "[✓] Instalasi selesai! Sistem akan reboot dalam 5 detik..."
 sleep 5
 reboot
