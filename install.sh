@@ -40,10 +40,10 @@ mount -o noatime,compress=zstd,subvol=@opt $ROOT_PART /mnt/opt
 mount -o noatime,compress=zstd,subvol=@srv $ROOT_PART /mnt/srv
 mount -o noatime,compress=zstd,subvol=@swap $ROOT_PART /mnt/swap
 mkdir -p /mnt/var/{log,cache,tmp}
-mkdir -p /mnt/var/cache/pacman
 mount -o noatime,compress=zstd,subvol=@log $ROOT_PART /mnt/var/log
 mount -o noatime,compress=zstd,subvol=@cache $ROOT_PART /mnt/var/cache
 mount -o noatime,compress=zstd,subvol=@var_tmp $ROOT_PART /mnt/var/tmp
+mkdir -p /mnt/var/cache/pacman/pkg
 mount -o noatime,compress=zstd,subvol=@pkg $ROOT_PART /mnt/var/cache/pacman/pkg
 
 echo "[+] Mount EFI partition"
