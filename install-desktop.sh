@@ -27,6 +27,25 @@ sudo pacman -S --noconfirm \
   kscreen \
   sddm-kcm
 
+echo "[+] Install Audio, Network, and Power Support"
+sudo pacman -S --noconfirm \
+  pipewire \
+  wireplumber \
+  pipewire-audio \
+  pipewire-alsa \
+  pipewire-pulse \
+  networkmanager \
+  powerdevil \
+  upower
+
+echo "[+] Install GPG & KWallet Support"
+sudo pacman -S --noconfirm \
+  gnupg \
+  pinentry-qt \
+  kwalletmanager \
+  kwallet-pam \
+  gpgme
+
 echo "[✓] Instalasi selesai! Sistem akan reboot dalam 5 detik..."
 sleep 5
 reboot
