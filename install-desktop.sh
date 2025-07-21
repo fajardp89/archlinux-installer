@@ -69,6 +69,7 @@ echo "[+] Install Utility Tools"
 install_safe \
   gparted \
   dosfstools \
+  kate \
   timeshift
 
 echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
