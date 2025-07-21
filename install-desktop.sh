@@ -8,6 +8,13 @@ install_safe() {
   done
 }
 
+install_safe_needed() {
+  for pkg in "$@"; do
+    echo "[+] Memasang paket (cek sudah ada dulu): $pkg"
+    sudo pacman -S --noconfirm --needed "$pkg" || echo "[!] Gagal memasang $pkg, dilewati."
+  done
+}
+
 echo "[+] Update sistem"
 sudo pacman -Syu --noconfirm
 
@@ -63,6 +70,21 @@ install_safe \
   gparted \
   dosfstools \
   timeshift
+
+echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
+install_safe_needed base-devel git
+
+echo "[+] Install yay (AUR helper)"
+cd /tmp
+rm -rf yay
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si --noconfirm
+cd /
+rm -rf /tmp/yay
+
+echo "[+] Install neofetch dari AUR"
+yay -S --noconfirm neofetch
 
 echo "[✓] Instalasi selesai! Sistem akan reboot dalam 5 detik..."
 sleep 5
