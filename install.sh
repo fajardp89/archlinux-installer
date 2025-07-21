@@ -19,20 +19,30 @@ echo "[+] Mount root untuk buat subvolume"
 mount $ROOT_PART /mnt
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@var
 btrfs subvolume create /mnt/@log
 btrfs subvolume create /mnt/@cache
 btrfs subvolume create /mnt/@tmp
-btrfs subvolume create /mnt/@snapshots
+btrfs subvolume create /mnt/@pkg
+btrfs subvolume create /mnt/@opt
+btrfs subvolume create /mnt/@srv
+btrfs subvolume create /mnt/@var_tmp
+btrfs subvolume create /mnt/@swap
 umount /mnt
 
 echo "[+] Mounting subvolumes"
 mount -o noatime,compress=zstd,subvol=@ $ROOT_PART /mnt
-mkdir -p /mnt/{home,var/log,var/cache,tmp,timeshift-btrfs}
+mkdir -p /mnt/{home,var/log,var/cache,var/tmp,tmp,opt,srv,var/cache/pacman/pkg,swap}
 mount -o noatime,compress=zstd,subvol=@home $ROOT_PART /mnt/home
+mount -o noatime,compress=zstd,subvol=@var $ROOT_PART /mnt/var
 mount -o noatime,compress=zstd,subvol=@log $ROOT_PART /mnt/var/log
 mount -o noatime,compress=zstd,subvol=@cache $ROOT_PART /mnt/var/cache
+mount -o noatime,compress=zstd,subvol=@var_tmp $ROOT_PART /mnt/var/tmp
+mount -o noatime,compress=zstd,subvol=@pkg $ROOT_PART /mnt/var/cache/pacman/pkg
 mount -o noatime,compress=zstd,subvol=@tmp $ROOT_PART /mnt/tmp
-mount -o noatime,compress=zstd,subvol=@snapshots $ROOT_PART /mnt/timeshift-btrfs
+mount -o noatime,compress=zstd,subvol=@opt $ROOT_PART /mnt/opt
+mount -o noatime,compress=zstd,subvol=@srv $ROOT_PART /mnt/srv
+mount -o noatime,compress=zstd,subvol=@swap $ROOT_PART /mnt/swap
 
 echo "[+] Mount EFI partition"
 mkdir -p /mnt/boot/efi
