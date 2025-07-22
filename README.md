@@ -50,7 +50,12 @@ Pastikan kamu sudah terkoneksi internet (misalnya via WiFi atau ethernet).
 
 ```bash
 cd /root
-git clone https://github.com/NAMAUSER/NAMAREPO.git
-cd NAMAREPO
+git clone https://github.com/fajardp89/archlinux-installer.git
+cd archlinux-installer
 chmod +x install.sh
 ./install.sh
+
+git clone https://github.com/fajardp89/archlinux-installer.git
+cd archlinux-installer
+chmod +x install-desktop.sh
+./install-desktop.sh
