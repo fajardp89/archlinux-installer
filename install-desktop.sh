@@ -33,7 +33,8 @@ install_safe \
   pipewire-pulse \
   wireplumber \
   sof-firmware \
-  pavucontrol
+  pavucontrol \
+  gvfs
 
 systemctl enable lightdm.service
 
