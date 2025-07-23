@@ -71,6 +71,7 @@ install_safe \
   dosfstools \
   kate \
   firefox \
+  libreoffice-fresh \
   timeshift
 
 echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
