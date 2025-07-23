@@ -74,6 +74,7 @@ install_safe \
   libreoffice-fresh \
   telegram-desktop \
   gwenview \
+  haruna \
   timeshift \
   geoclue \
   geoip \
