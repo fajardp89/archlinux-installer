@@ -26,7 +26,13 @@ install_safe \
   lightdm \
   lightdm-gtk-greeter \
   lightdm-gtk-greeter-settings \
-  network-manager-applet
+  network-manager-applet \
+  xf86-video-intel \
+  mesa \
+  pipewire \
+  pipewire-pulse \
+  wireplumber \
+  sof-firmware
 
 systemctl enable lightdm.service
 
