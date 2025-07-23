@@ -101,6 +101,7 @@ rm -rf /tmp/yay
 
 yay -S neofetch
 yay -S spotify
+yay -S tradingview
 
 echo "[+] Install dan aktifkan FirewallD"
 install_safe firewalld
