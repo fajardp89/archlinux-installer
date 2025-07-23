@@ -26,6 +26,7 @@ install_safe \
   lightdm \
   lightdm-gtk-greeter \
   lightdm-gtk-greeter-settings \
+  network-manager-applet
 
 systemctl enable lightdm.service
 
