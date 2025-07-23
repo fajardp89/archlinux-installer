@@ -99,6 +99,8 @@ echo "[+] Enable NetworkManager"
 systemctl enable NetworkManager
 EOF
 
+exit
+
 echo "[✓] Instalasi selesai! Sistem akan dimatikan dalam 5 detik..."
 umount -R /mnt
 swapoff $SWAP_PART
