@@ -91,7 +91,7 @@ grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "[+] Create user: $USERNAME"
-useradd -m -G wheel $USERNAME
+useradd -m -G wheel,audio,video,network,storage,optical,power,lp,scanner -s /bin/bash $USERNAME
 echo "$USERNAME:$USER_PASS" | chpasswd
 echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/wheel
 
