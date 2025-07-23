@@ -72,7 +72,13 @@ install_safe \
   kate \
   firefox \
   libreoffice-fresh \
-  timeshift
+  timeshift \
+  geoclue \
+  geoip \
+  dbus \
+  iw \
+  modemmanager \
+  avahi
 
 echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
 install_safe_needed base-devel git
