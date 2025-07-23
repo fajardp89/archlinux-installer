@@ -73,6 +73,7 @@ install_safe \
   firefox \
   libreoffice-fresh \
   telegram-desktop \
+  gwenview \
   timeshift \
   geoclue \
   geoip \
