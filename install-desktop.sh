@@ -76,6 +76,7 @@ install_safe \
   gwenview \
   haruna \
   yt-dlp \
+  okular \
   timeshift \
   geoclue \
   geoip \
