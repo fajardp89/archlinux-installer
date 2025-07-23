@@ -81,6 +81,7 @@ install_safe \
   kcalc \
   ark \
   timeshift \
+  grub-btrfs \
   geoclue \
   geoip \
   iw \
