@@ -38,7 +38,7 @@ mount -o noatime,compress=zstd,subvol=@var $ROOT_PART /mnt/var
 mount -o noatime,compress=zstd,subvol=@tmp $ROOT_PART /mnt/tmp
 mount -o noatime,compress=zstd,subvol=@opt $ROOT_PART /mnt/opt
 mount -o noatime,compress=zstd,subvol=@srv $ROOT_PART /mnt/srv
-mount -o noatime,compress=no,nodatacow,subvol=/@swap $ROOT_PART /mnt/swap
+mount -o noatime,compress=no,nodatacow,subvol=@swap $ROOT_PART /mnt/swap
 mkdir -p /mnt/var/{log,cache,tmp}
 mount -o noatime,compress=zstd,subvol=@log $ROOT_PART /mnt/var/log
 mount -o noatime,compress=zstd,subvol=@cache $ROOT_PART /mnt/var/cache
