@@ -77,6 +77,9 @@ install_safe \
   haruna \
   yt-dlp \
   okular \
+  spectacle \
+  kcalc \
+  ark \
   timeshift \
   geoclue \
   geoip \
