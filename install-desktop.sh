@@ -72,6 +72,7 @@ install_safe \
   kate \
   firefox \
   libreoffice-fresh \
+  telegram-desktop \
   timeshift \
   geoclue \
   geoip \
