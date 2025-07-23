@@ -1,6 +1,6 @@
 # 🐧 ArchLinux Automated Installer by Fajar
 
-Script ini digunakan untuk mengotomatisasi proses instalasi Arch Linux dengan partisi BTRFS, bootloader GRUB UEFI, dan desktop environment KDE Plasma minimal (Wayland).
+Script ini digunakan untuk mengotomatisasi proses instalasi Arch Linux dengan partisi BTRFS, bootloader GRUB UEFI, dan desktop environment XFCE.
 
 ---
 
@@ -19,8 +19,8 @@ Script ini digunakan untuk mengotomatisasi proses instalasi Arch Linux dengan pa
 - ✅ Mount partisi `/data` secara permanen tanpa format ulang
 - ✅ Instalasi sistem dasar (`base`, `linux`, `networkmanager`, `grub`, dll)
 - ✅ Setup user, hostname, locale, zona waktu otomatis
-- ✅ Install KDE Plasma (minimal) pasca reboot tanpa SDDM
-- ✅ Gunakan `dbus-run-session startplasma-wayland` untuk masuk ke desktop
+- ✅ Install XFCE Desktop Environment
+- ✅ Lightdm Display Manager
 
 ---
 
