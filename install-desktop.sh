@@ -75,7 +75,6 @@ install_safe \
   timeshift \
   geoclue \
   geoip \
-  dbus \
   iw \
   modemmanager \
   avahi
