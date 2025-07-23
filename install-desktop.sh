@@ -28,14 +28,7 @@ install_safe \
   lightdm-gtk-greeter-settings \
   network-manager-applet \
   xf86-video-intel \
-  mesa \
-  pipewire \
-  pipewire-pulse \
-  wireplumber \
-  sof-firmware \
-  pavucontrol \
-  gvfs \
-  xdg-user-dirs
+  mesa
 
 systemctl enable lightdm.service
 
