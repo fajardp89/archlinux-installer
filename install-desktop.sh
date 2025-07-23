@@ -65,11 +65,12 @@ install_safe \
   kwallet-pam \
   gpgme
 
-echo "[+] Install Utility Tools"
+echo "[+] Install Apps & Utility Tools"
 install_safe \
   gparted \
   dosfstools \
   kate \
+  firefox \
   timeshift
 
 echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
