@@ -79,6 +79,9 @@ install_safe \
   modemmanager \
   avahi
 
+sudo systemctl enable --now avahi-daemon.service
+sudo systemctl enable --now ModemManager.service
+
 echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
 install_safe_needed base-devel git
 
