@@ -99,6 +99,9 @@ makepkg -si --noconfirm
 cd /
 rm -rf /tmp/yay
 
+yay -S neofetch
+yay -S spotify
+
 echo "[+] Install dan aktifkan FirewallD"
 install_safe firewalld
 
