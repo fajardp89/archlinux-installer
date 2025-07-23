@@ -34,7 +34,8 @@ install_safe \
   wireplumber \
   sof-firmware \
   pavucontrol \
-  gvfs
+  gvfs \
+  xdg-user-dirs
 
 systemctl enable lightdm.service
 
