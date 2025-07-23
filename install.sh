@@ -6,7 +6,6 @@ DISK="/dev/nvme0n1"
 EFI_PART="${DISK}p1"
 SWAP_PART="${DISK}p2"
 ROOT_PART="${DISK}p3"
-DATA_PART="${DISK}p4"
 HOSTNAME="archlinux"
 USERNAME="fajar"
 ROOT_PASS="r!N4@O50689"
@@ -49,10 +48,6 @@ mount -o noatime,compress=zstd,subvol=@pkg $ROOT_PART /mnt/var/cache/pacman/pkg
 echo "[+] Mount EFI partition"
 mkdir -p /mnt/boot/efi
 mount $EFI_PART /mnt/boot/efi
-
-echo "[+] Mounting /data partition"
-mkdir -p /mnt/data
-mount $DATA_PART /mnt/data
 
 echo "[+] Enable swap"
 swapon $SWAP_PART
