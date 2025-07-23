@@ -18,78 +18,16 @@ install_safe_needed() {
 echo "[+] Update sistem"
 sudo pacman -Syu --noconfirm
 
-echo "[+] Install XDG/Wayland Core Dependencies"
+echo "[+] Install Desktop Environment"
 install_safe \
-  xorg-xwayland \
-  xdg-desktop-portal \
-  xdg-desktop-portal-kde \
-  qt5-wayland qt6-wayland \
-  plasma-wayland-session \
-  wayland-utils \
-  wayland-protocols \
-  dbus
+  xorg \
+  xfce4 \
+  xfce4-goodies \
+  lightdm \
+  lightdm-gtk-greeter \
+  lightdm-gtk-greeter-settings \
 
-echo "[+] Install KDE Plasma Minimal"
-install_safe \
-  plasma-desktop \
-  plasma-workspace \
-  plasma-nm \
-  kde-cli-tools \
-  dolphin \
-  konsole \
-  systemsettings \
-  kscreen \
-  sddm \
-  sddm-kcm
-
-systemctl enable sddm.service
-
-echo "[+] Install Audio, Network, and Power Support"
-install_safe \
-  pipewire \
-  wireplumber \
-  pipewire-audio \
-  pipewire-alsa \
-  pipewire-pulse \
-  networkmanager \
-  powerdevil \
-  upower \
-  plasma-pa \
-  sof-firmware
-
-echo "[+] Install GPG & KWallet Support"
-install_safe \
-  gnupg \
-  pinentry-qt \
-  kwalletmanager \
-  kwallet-pam \
-  gpgme
-
-echo "[+] Install Apps & Utility Tools"
-install_safe \
-  gparted \
-  dosfstools \
-  kate \
-  firefox \
-  libreoffice-fresh \
-  telegram-desktop \
-  gwenview \
-  haruna \
-  yt-dlp \
-  okular \
-  spectacle \
-  kcalc \
-  ark \
-  timeshift \
-  grub-btrfs \
-  geoclue \
-  geoip \
-  iw \
-  modemmanager \
-  avahi
-
-sudo systemctl enable --now avahi-daemon.service
-sudo systemctl enable --now ModemManager.service
+systemctl enable lightdm.service
 
 echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
 install_safe_needed base-devel git
@@ -102,10 +40,6 @@ cd yay
 makepkg -si --noconfirm
 cd /
 rm -rf /tmp/yay
-
-yay -S neofetch
-yay -S spotify
-yay -S tradingview
 
 echo "[+] Install dan aktifkan FirewallD"
 install_safe firewalld
