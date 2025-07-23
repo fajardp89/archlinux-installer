@@ -75,6 +75,7 @@ install_safe \
   telegram-desktop \
   gwenview \
   haruna \
+  yt-dlp \
   timeshift \
   geoclue \
   geoip \
