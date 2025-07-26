@@ -62,7 +62,7 @@ pacman -Sy reflector --noconfirm
 reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 
 echo "[+] Install base system"
-pacstrap -K /mnt base base-devel linux linux-firmware intel-ucode nano sudo networkmanager grub efibootmgr btrfs-progs git bash
+pacstrap -K /mnt base base-devel linux linux-firmware intel-ucode nano sudo networkmanager grub efibootmgr btrfs-progs git bash tzdata
 
 echo "[+] Generate fstab"
 genfstab -U /mnt >> /mnt/etc/fstab
