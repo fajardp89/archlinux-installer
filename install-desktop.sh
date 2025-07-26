@@ -21,16 +21,15 @@ sudo pacman -Syu --noconfirm
 echo "[+] Install Desktop Environment"
 install_safe \
   xorg \
-  xfce4 \
-  xfce4-goodies \
-  lightdm \
-  lightdm-gtk-greeter \
-  lightdm-gtk-greeter-settings \
-  network-manager-applet \
-  xf86-video-intel \
-  mesa
+  plasma-desktop \
+  sddm \
+  konsole \
+  dolphin \
+  plasma nm \
+  plasma pa
 
-systemctl enable lightdm.service
+sudo systemctl enable sddm
+sudo systemctl start sddm
 
 echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
 install_safe_needed base-devel git
