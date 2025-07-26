@@ -22,6 +22,7 @@ echo "[+] Install Desktop Environment"
 install_safe \
   xorg \
   plasma-desktop \
+  plasma-workspace \
   sddm \
   konsole \
   dolphin \
