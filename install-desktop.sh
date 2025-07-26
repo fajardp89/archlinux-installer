@@ -26,8 +26,8 @@ install_safe \
   sddm \
   konsole \
   dolphin \
-  plasma nm \
-  plasma pa
+  plasma-nm \
+  plasma-pa
 
 sudo systemctl enable sddm
 
