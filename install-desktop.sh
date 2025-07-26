@@ -30,7 +30,6 @@ install_safe \
   plasma pa
 
 sudo systemctl enable sddm
-sudo systemctl start sddm
 
 echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
 install_safe_needed base-devel git
@@ -49,7 +48,6 @@ install_safe firewalld
 
 echo "[+] Enable dan start firewalld.service"
 sudo systemctl enable firewalld.service
-sudo systemctl start firewalld.service
 
 echo "[✓] Instalasi selesai! Sistem akan reboot dalam 5 detik..."
 sleep 5
