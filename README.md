@@ -1,6 +1,6 @@
 # 🐧 ArchLinux Automated Installer by Fajar
 
-Script ini digunakan untuk mengotomatisasi proses instalasi Arch Linux dengan partisi BTRFS, bootloader GRUB UEFI, dan desktop environment XFCE.
+Script ini digunakan untuk mengotomatisasi proses instalasi Arch Linux dengan partisi BTRFS, bootloader GRUB UEFI, dan desktop environment KDE.
 
 ---
 
