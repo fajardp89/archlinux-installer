@@ -9,8 +9,8 @@ ROOT_PART="${DISK}p3"
 DATA_PART="${DISK}p4"
 HOSTNAME="archlinux"
 USERNAME="fajar"
-ROOT_PASS="pass"
-USER_PASS="pass"
+ROOT_PASS="r!N4@O50689"
+USER_PASS="050689"
 
 echo "[+] Format BTRFS on $ROOT_PART"
 mkfs.btrfs -f -L ArchRoot $ROOT_PART
