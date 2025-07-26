@@ -20,7 +20,6 @@ sudo pacman -Syu --noconfirm
 
 echo "[+] Install Desktop Environment"
 install_safe \
-  xorg \
   plasma-desktop \
   plasma-workspace \
   xorg-xwayland \
