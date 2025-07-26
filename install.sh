@@ -50,6 +50,10 @@ echo "[+] Mount EFI partition"
 mkdir -p /mnt/boot/efi
 mount $EFI_PART /mnt/boot/efi
 
+echo "[+] Mounting /data partition"
+mkdir -p /mnt/data
+mount $DATA_PART /mnt/data
+
 echo "[+] Enable swap"
 swapon $SWAP_PART
 
