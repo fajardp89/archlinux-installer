@@ -19,8 +19,8 @@ Script ini digunakan untuk mengotomatisasi proses instalasi Arch Linux dengan pa
 - ✅ Mount partisi `/data` secara permanen tanpa format ulang
 - ✅ Instalasi sistem dasar (`base`, `linux`, `networkmanager`, `grub`, dll)
 - ✅ Setup user, hostname, locale, zona waktu otomatis
-- ✅ Install XFCE Desktop Environment
-- ✅ Lightdm Display Manager
+- ✅ Install KDE Minimal Desktop Environment
+- ✅ SDDM Display Manager
 
 ---
 
