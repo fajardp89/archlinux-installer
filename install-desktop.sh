@@ -23,7 +23,6 @@ install_safe \
   plasma-desktop \
   plasma-workspace \
   xorg-xwayland \
-  xdg-desktop-portal-kde \
   sddm \
   konsole \
   dolphin \
