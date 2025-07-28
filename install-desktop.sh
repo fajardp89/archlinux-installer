@@ -29,7 +29,7 @@ install_safe \
   plasma-nm \
   plasma-pa
 
-sudo systemctl enable sddm
+sudo systemctl enable sddm.service
 
 echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
 install_safe_needed base-devel git
