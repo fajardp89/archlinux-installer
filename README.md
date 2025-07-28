@@ -1,4 +1,4 @@
-# 🐧 ArchLinux Automated Installer by Fajar
+# 🐧 ArchLinux Automated Installer by Fajar Destra Prayoga
 
 Script ini digunakan untuk mengotomatisasi proses instalasi Arch Linux dengan partisi BTRFS, bootloader GRUB UEFI, dan desktop environment KDE.
 
