@@ -52,7 +52,7 @@ mount $EFI_PART /mnt/boot/efi
 
 echo "[+] Mounting /data partition"
 mkdir -p /mnt/data
-mount $DATA_PART /mnt/data
+mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2 $DATA_PART /mnt/data
 
 echo "[+] Enable swap"
 swapon $SWAP_PART
