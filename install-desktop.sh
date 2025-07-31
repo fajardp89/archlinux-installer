@@ -27,7 +27,8 @@ install_safe \
   konsole \
   dolphin \
   plasma-nm \
-  plasma-pa
+  plasma-pa \
+  firefox
 
 sudo systemctl enable sddm.service
 
