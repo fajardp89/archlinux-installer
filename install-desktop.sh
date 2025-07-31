@@ -28,6 +28,7 @@ install_safe \
   dolphin \
   plasma-nm \
   plasma-pa \
+  kate \
   firefox
 
 sudo systemctl enable sddm.service
