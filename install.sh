@@ -6,14 +6,13 @@ DISK="/dev/nvme0n1"
 EFI_PART="${DISK}p1"
 SWAP_PART="${DISK}p2"
 ROOT_PART="${DISK}p3"
-DATA_PART="${DISK}p4"
 HOSTNAME="archlinux"
 USERNAME="fajar"
-ROOT_PASS="password123"
-USER_PASS="password123"
+ROOT_PASS="r!N4@O50689"
+USER_PASS="mamah@R1na25"
 
 echo "[+] Format BTRFS on $ROOT_PART"
-mkfs.btrfs -f -L ArchRoot $ROOT_PART
+mkfs.btrfs -f -L archlinux $ROOT_PART
 
 echo "[+] Mount root untuk buat subvolume"
 mount $ROOT_PART /mnt
@@ -49,10 +48,6 @@ mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@pkg $ROO
 echo "[+] Mount EFI partition"
 mkdir -p /mnt/boot/efi
 mount $EFI_PART /mnt/boot/efi
-
-echo "[+] Mounting /data partition"
-mkdir -p /mnt/data
-mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2 $DATA_PART /mnt/data
 
 echo "[+] Enable swap"
 swapon $SWAP_PART
