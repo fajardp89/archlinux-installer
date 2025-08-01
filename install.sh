@@ -8,8 +8,8 @@ SWAP_PART="${DISK}p2"
 ROOT_PART="${DISK}p3"
 HOSTNAME="archlinux"
 USERNAME="fajar"
-ROOT_PASS="fajar123"
-USER_PASS="fajar123"
+ROOT_PASS="r!N4@O50689"
+USER_PASS="mamah@R1na25"
 
 echo "[+] Format BTRFS on $ROOT_PART"
 mkfs.btrfs -f -L archlinux $ROOT_PART
