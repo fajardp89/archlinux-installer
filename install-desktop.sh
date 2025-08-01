@@ -18,20 +18,29 @@ install_safe_needed() {
 echo "[+] Update sistem"
 sudo pacman -Syu --noconfirm
 
-echo "[+] Install Desktop Environment"
+echo "[+] Install Sway dan komponen pendukungnya"
 install_safe \
-  plasma-desktop \
-  plasma-workspace \
+  sway \
+  foot \
+  waybar \
+  wofi \
+  mako \
+  grim \
+  slurp \
+  swaybg \
   xorg-xwayland \
-  sddm \
-  konsole \
-  dolphin \
-  plasma-nm \
-  plasma-pa \
-  kate \
+  xdg-desktop-portal \
+  xdg-desktop-portal-wlr \
+  thunar \
+  thunar-archive-plugin \
+  file-roller \
+  gvfs \
+  tumbler \
+  mpv \
+  imv \
   firefox
 
-sudo systemctl enable sddm.service
+# Optional: autologin setup bisa ditambahkan di luar script ini jika perlu
 
 echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
 install_safe_needed base-devel git
