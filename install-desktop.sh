@@ -38,7 +38,18 @@ install_safe \
   tumbler \
   mpv \
   imv \
-  firefox
+  firefox \
+  pipewire \
+  wireplumber \
+  pipewire-audio \
+  pavucontrol \
+  ttf-dejavu \
+  ttf-liberation \
+  noto-fonts \
+  noto-fonts-emoji \
+  network-manager-applet \
+  upower \
+  brightnessctl
 
 # Optional: autologin setup bisa ditambahkan di luar script ini jika perlu
 
