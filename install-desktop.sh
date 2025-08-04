@@ -39,7 +39,43 @@ sudo pacman -Syu --noconfirm
 echo "[+] Install Sway dan komponen pendukungnya"
 install_safe \
   sway \
-  
+  swaybg \
+  swaylock \
+  waybar \
+  wofi \
+  mako \
+  wl-clipboard \
+  foot \
+  xdg-desktop-portal-wlr \
+  xdg-user-dirs \
+  xdg-user-dirs-gtk \
+  xdg-utils \
+  dbus \
+  glib2 \
+  gtk3 \
+  network-manager-applet \
+  polkit-gnome \
+  thunar \
+  thunar-archive-plugin \
+  file-roller \
+  gvfs \
+  gvfs-mtp \
+  udisks2 \
+  udiskie \
+  unzip \
+  unrar \
+  ntfs-3g \
+  pavucontrol \
+  brightnessctl \
+  ttf-font-awesome \
+  noto-fonts \
+  noto-fonts-cjk \
+  noto-fonts-emoji \
+  adwaita-icon-theme \
+  papirus-icon-theme \
+  mesa \
+  vulkan-icd-loader \
+  xorg-server-xwayland
 
 echo "[+] Install base-devel dan git (dibutuhkan untuk build AUR)"
 install_safe_needed base-devel git
