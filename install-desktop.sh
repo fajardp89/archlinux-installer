@@ -63,10 +63,6 @@ echo "[+] Enable dan start firewalld.service"
 sudo systemctl enable firewalld.service
 sudo systemctl start firewalld.service
 
-# Aktifkan power management
-sudo systemctl enable tlp.service
-sudo systemctl enable acpid.service
-
 if [ ${#FAILED_PACKAGES[@]} -ne 0 ]; then
   echo "[!] Paket berikut gagal dipasang:"
   printf ' - %s\n' "${FAILED_PACKAGES[@]}"
