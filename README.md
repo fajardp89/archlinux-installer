@@ -15,12 +15,13 @@ Script ini digunakan untuk mengotomatisasi proses instalasi Arch Linux dengan pa
 
 ## 🧰 Fitur
 
-- ✅ Format dan setup partisi BTRFS dengan subvolume standar (`@`, `@home`, dll)
-- ✅ Mount partisi `/data` secara permanen tanpa format ulang
-- ✅ Instalasi sistem dasar (`base`, `linux`, `networkmanager`, `grub`, dll)
-- ✅ Setup user, hostname, locale, zona waktu otomatis
-- ✅ Install KDE Minimal Desktop Environment
-- ✅ SDDM Display Manager
+## Install Desktop / Windows Manager
+✅ Status:
+    Siap untuk login via TTY dan menjalankan sway secara manual atau otomatis.
+    Sudah termasuk xwayland untuk kompatibilitas X11.
+    Tanpa PipeWire, sesuai permintaan — bisa ditambah manual nanti.
+    Sudah termasuk dukungan untuk tray, notifikasi, clipboard, file manager, audio, font, dan icon.
+    Polkit dan NetworkManager sudah siap pakai.
 
 ---
 
