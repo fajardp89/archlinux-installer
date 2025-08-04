@@ -46,6 +46,7 @@ install_safe \
   mako \
   wl-clipboard \
   foot \
+  xdg-desktop-portal \
   xdg-desktop-portal-wlr \
   xdg-user-dirs \
   xdg-user-dirs-gtk \
