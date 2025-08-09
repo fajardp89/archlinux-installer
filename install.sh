@@ -8,7 +8,7 @@ SWAP_PART="${DISK}p2"
 ROOT_PART="${DISK}p3"
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
-ROOT_PASS="r!N4@O50689"
+ROOT_PASS="r!N4@O50689#25"
 USER_PASS="050689"
 
 echo "[+] Format BTRFS on $ROOT_PART"
