@@ -57,7 +57,7 @@ pacstrap -K /mnt \
   linux linux-firmware intel-ucode \
   micro sudo networkmanager \
   grub efibootmgr btrfs-progs git bash tzdata lz4 zstd \
-  plasma-workspace kwin-wayland plasma-wayland-session \
+  plasma-workspace kwin-wayland \
   kde-cli-tools kglobalaccel foot \
   ttf-dejavu
 
