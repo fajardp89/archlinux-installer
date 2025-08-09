@@ -18,26 +18,27 @@ echo "[+] Mount root untuk buat subvolume"
 mount $ROOT_PART /mnt
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@home
-btrfs subvolume create /mnt/@var
 btrfs subvolume create /mnt/@log
 btrfs subvolume create /mnt/@cache
+btrfs subvolume create /mnt/@tmp
 btrfs subvolume create /mnt/@srv
 btrfs subvolume create /mnt/@swap
 umount /mnt
 
 echo "[+] Mounting subvolumes"
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@ $ROOT_PART /mnt
-mkdir -p /mnt/{home,var,tmp,opt,srv,swap}
-mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@home $ROOT_PART /mnt/home
-mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@var $ROOT_PART /mnt/var
-mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@tmp $ROOT_PART /mnt/tmp
-mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@opt $ROOT_PART /mnt/opt
-mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@srv $ROOT_PART /mnt/srv
+mkdir -p /mnt/home
+mkdir -p /mnt/tmp
+mkdir -p /mnt/srv
+mkdir -p /mnt/swap
+mkdir -p /mnt/var/log
+mkdir -p /mnt/var/cache
+mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@home  $ROOT_PART /mnt/home
+mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@tmp   $ROOT_PART /mnt/tmp
+mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@srv   $ROOT_PART /mnt/srv
 mount -o noatime,nodatacow,compress=no,subvol=@swap $ROOT_PART /mnt/swap
-mkdir -p /mnt/var/{log,cache,tmp}
-mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@log $ROOT_PART /mnt/var/log
+mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@log   $ROOT_PART /mnt/var/log
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@cache $ROOT_PART /mnt/var/cache
-mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@var_tmp $ROOT_PART /mnt/var/tmp
 
 echo "[+] Mount EFI partition"
 mkdir -p /mnt/boot/efi
