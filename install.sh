@@ -21,11 +21,7 @@ btrfs subvolume create /mnt/@home
 btrfs subvolume create /mnt/@var
 btrfs subvolume create /mnt/@log
 btrfs subvolume create /mnt/@cache
-btrfs subvolume create /mnt/@tmp
-btrfs subvolume create /mnt/@pkg
-btrfs subvolume create /mnt/@opt
 btrfs subvolume create /mnt/@srv
-btrfs subvolume create /mnt/@var_tmp
 btrfs subvolume create /mnt/@swap
 umount /mnt
 
@@ -42,8 +38,6 @@ mkdir -p /mnt/var/{log,cache,tmp}
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@log $ROOT_PART /mnt/var/log
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@cache $ROOT_PART /mnt/var/cache
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@var_tmp $ROOT_PART /mnt/var/tmp
-mkdir -p /mnt/var/cache/pacman/pkg
-mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@pkg $ROOT_PART /mnt/var/cache/pacman/pkg
 
 echo "[+] Mount EFI partition"
 mkdir -p /mnt/boot/efi
