@@ -58,7 +58,7 @@ pacstrap -K /mnt \
   micro sudo networkmanager \
   grub efibootmgr btrfs-progs git bash tzdata lz4 zstd \
   plasma-workspace kwin-wayland plasma-wayland-session \
-  kde-cli-tools kglobalaccel kinit foot \
+  kde-cli-tools kglobalaccel foot \
   ttf-dejavu
 
 echo "[+] Generate fstab"
