@@ -54,12 +54,11 @@ reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirror
 echo "[+] Install base system"
 pacstrap -K /mnt \
   base base-devel \
-  linux linux-firmware \
-  intel-ucode \
+  linux linux-firmware intel-ucode \
   micro sudo networkmanager \
   grub efibootmgr btrfs-progs git bash tzdata lz4 zstd \
-  xorg-server xorg-xinit \
-  xfwm4 xfce4-session xfce4-settings kitty \
+  plasma-workspace kwin-wayland plasma-wayland-session \
+  kde-cli-tools kglobalaccel kinit foot \
   ttf-dejavu
 
 echo "[+] Generate fstab"
