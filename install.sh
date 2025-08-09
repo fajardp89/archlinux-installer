@@ -6,13 +6,13 @@ DISK="/dev/nvme0n1"
 EFI_PART="${DISK}p1"
 SWAP_PART="${DISK}p2"
 ROOT_PART="${DISK}p3"
-HOSTNAME="fajardp-archlinux-pc"
+HOSTNAME="fdp-archlinux-pc"
 USERNAME="fajar"
 ROOT_PASS="r!N4@O50689#25"
 USER_PASS="050689"
 
 echo "[+] Format BTRFS on $ROOT_PART"
-mkfs.btrfs -f -L ArchLinux $ROOT_PART
+mkfs.btrfs -f -L archlinux $ROOT_PART
 
 echo "[+] Mount root untuk buat subvolume"
 mount $ROOT_PART /mnt
@@ -52,7 +52,7 @@ pacman -Sy reflector --noconfirm
 reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 
 echo "[+] Install base system"
-pacstrap -K /mnt base base-devel linux linux-firmware intel-ucode nano sudo networkmanager grub efibootmgr btrfs-progs git bash tzdata lz4 zstd
+pacstrap -K /mnt base base-devel linux linux-firmware intel-ucode micro sudo networkmanager grub efibootmgr btrfs-progs git bash tzdata lz4 zstd
 
 echo "[+] Generate fstab"
 genfstab -U /mnt >> /mnt/etc/fstab
