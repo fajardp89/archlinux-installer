@@ -12,7 +12,7 @@ ROOT_PASS="r!N4@O50689#25"
 USER_PASS="050689"
 
 echo "[+] Format BTRFS on $ROOT_PART"
-mkfs.btrfs -f -L ArchLinux $ROOT_PART
+mkfs.btrfs -f -L archlinux $ROOT_PART
 
 echo "[+] Mount root untuk buat subvolume"
 mount $ROOT_PART /mnt
