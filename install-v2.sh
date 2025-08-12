@@ -191,7 +191,7 @@ fi
 # Install base system (include dhcpcd so iwd can get DHCP)
 # -----------------------
 info "Installing base system and required packages (this may take a while)"
-pacstrap -K /mnt base base-devel linux-zen linux-firmware intel-ucode vim sudo btrfs-progs git bash tzdata lz4 zstd iwd dhcpcd firewalld apparmor --noconfirm --needed
+pacstrap -K /mnt base base-devel linux-zen linux-firmware intel-ucode vim sudo btrfs-progs git bash tzdata lz4 zstd iwd dhcpcd firewalld apparmor pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack sof-firmware --noconfirm --needed
 
 # -----------------------
 # Generate fstab
@@ -212,7 +212,7 @@ ROOT_PART='${ROOT_PART}'
 KERNEL_LSM_PARAMS='${KERNEL_LSM_PARAMS}'
 KERNEL_NAME='vmlinuz-linux-zen'
 INITRAMFS_NAME='initramfs-linux-zen.img'
-MCU_INTEL='/intel-ucode.img'
+MCU_INTEL='intel-ucode.img'
 VARS
 chmod 600 /mnt/root/installer_vars.sh
 
@@ -303,6 +303,8 @@ systemctl enable iwd || true
 systemctl enable dhcpcd || true
 systemctl enable firewalld || true
 systemctl enable apparmor || true
+# enable PipeWire user units globally so new users auto-run them
+systemctl --global enable pipewire.service pipewire-pulse.service wireplumber.service || true
 
 # pacman hooks
 mkdir -p /etc/pacman.d/hooks
