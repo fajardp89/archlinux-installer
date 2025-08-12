@@ -45,18 +45,17 @@ mkfs.btrfs -f -L archlinux "$ROOT_PART"
 
 echo "[+] Buat subvolume BTRFS"
 mount "$ROOT_PART" /mnt
-for subvol in @ @home @log @cache @tmp @srv @swap; do
+for subvol in @ @home @log @cache @tmp @srv; do
     btrfs subvolume create "/mnt/$subvol"
 done
 umount /mnt
 
 echo "[+] Mount subvolumes (root = subvol=@)"
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@ "$ROOT_PART" /mnt
-mkdir -p /mnt/{home,tmp,srv,swap,var/log,var/cache}
+mkdir -p /mnt/{home,tmp,srv,var/log,var/cache}
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@home  "$ROOT_PART" /mnt/home
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@tmp   "$ROOT_PART" /mnt/tmp
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@srv   "$ROOT_PART" /mnt/srv
-mount -o noatime,nodatacow,compress=no,subvol=@swap "$ROOT_PART" /mnt/swap
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@log   "$ROOT_PART" /mnt/var/log
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@cache "$ROOT_PART" /mnt/var/cache
 
