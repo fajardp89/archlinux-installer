@@ -50,8 +50,8 @@ EFI_LABEL="EFI"
 SWAP_LABEL="Swap"
 
 # Predefined hostname and username — EDIT THESE
-HOSTNAME="arch"   # change as desired
-USERNAME="user"   # change as desired
+HOSTNAME="fajardp-archlinux-pc"   # change as desired
+USERNAME="fajar"   # change as desired
 
 # Kernel LSM parameter to append to kernel cmdline (includes AppArmor flags)
 KERNEL_LSM_PARAMS="lsm=landlock,lockdown,yama,integrity,apparmor,bpf apparmor=1 security=apparmor"
