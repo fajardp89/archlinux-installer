@@ -192,7 +192,7 @@ cat > /etc/hosts <<EOFHOSTS
 EOFHOSTS
 
 # create user (but set passwords interactively for max security)
-useradd -m -G wheel,audio,video,storage -s /bin/bash "${USERNAME}"
+useradd -m -G wheel,audio,video,storage,lp,optical,scanner -s /bin/bash "${USERNAME}"
 
 # set root and user passwords interactively
 echo "Please set the root password now:";
