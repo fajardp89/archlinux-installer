@@ -22,6 +22,9 @@ SWAP_LABEL="Swap"
 HOSTNAME="arch"   # Ganti sesuai keinginan
 USERNAME="user"   # Ganti sesuai keinginan
 
+# Kernel LSM parameter to append to kernel cmdline
+KERNEL_LSM_PARAMS="lsm=landlock,lockdown,yama,integrity,apparmor,bpf"
+
 info(){ echo "[INFO] $*"; }
 err(){ echo "[ERROR] $*" >&2; }
 
@@ -107,6 +110,8 @@ parted -s "$DISK" set 1 esp on
 parted -s "$DISK" mkpart primary linux-swap ${EFI_END}MiB ${SWAP_END}MiB
 parted -s "$DISK" mkpart primary btrfs ${SWAP_END}MiB 100%
 partprobe "$DISK" || true
+# let udev settle so device nodes appear
+udevadm settle || true
 
 # -----------------------
 # Formatting
@@ -161,7 +166,7 @@ fi
 # -----------------------
 info "Installing base system and required packages (this may take a while)"
 # include dhcpcd so network works after first boot
-pacstrap -K /mnt base base-devel linux-zen linux-firmware intel-ucode vim sudo btrfs-progs git bash tzdata lz4 zstd iwd dhcpcd firewalld apparmor --noconfirm --needed
+pacstrap -K /mnt base base-devel linux-zen linux-firmware intel-ucode vim sudo btrfs-progs git bash tzdata lz4 zstd iwd dhcpcd firewalld apparmor
 
 # -----------------------
 # Generate fstab
