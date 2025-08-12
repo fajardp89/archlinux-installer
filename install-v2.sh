@@ -11,19 +11,33 @@ USERNAME="fajar"
 ROOT_PASS="passwd"
 USER_PASS="passwd"
 
-# Kernel params yang diminta (termasuk audit=1 untuk auditd)
+# Kernel params yang diminta (termasuk audit=1)
 KERNEL_PARAMS="lsm=landlock,lockdown,yama,integrity,apparmor,bpf audit=1"
 
 # -----------------------------------------
-echo "[+] Pastikan device benar:"
-echo "    DISK = $DISK"
-echo "    EFI_PART = $EFI_PART"
-echo "    SWAP_PART = $SWAP_PART"
-echo "    ROOT_PART = $ROOT_PART"
+echo "[!] PERINGATAN: Script ini akan memformat $ROOT_PART (dan bisa format $EFI_PART jika kamu setuju)."
+echo "    Periksa variabel di awal script: DISK, EFI_PART, SWAP_PART, ROOT_PART."
 read -p "Lanjutkan? (ketik 'yes' untuk melanjutkan) " CONF
 if [[ "$CONF" != "yes" ]]; then
   echo "Dibatalkan."
   exit 1
+fi
+
+# Pastikan lingkungan UEFI (systemd-boot memerlukan UEFI)
+if [ ! -d /sys/firmware/efi ]; then
+  echo "ERROR: Sistem live tidak boot dalam mode UEFI. systemd-boot membutuhkan UEFI. Hentikan."
+  exit 1
+fi
+
+# Pilihan format EFI (opsional)
+read -p "Format EFI partition $EFI_PART sebagai FAT32? (ketik 'yes' untuk format, 'no' untuk skip) " EFI_FMT
+if [[ "$EFI_FMT" == "yes" ]]; then
+  if ! command -v mkfs.fat >/dev/null 2>&1 && ! command -v mkfs.vfat >/dev/null 2>&1; then
+    echo "ERROR: mkfs.fat/mkfs.vfat tidak ditemukan di environment live. Install dosfstools dulu atau format manual."
+    exit 1
+  fi
+  echo "[+] Formatting $EFI_PART as FAT32 (label: EFI)"
+  mkfs.fat -F32 -n EFI "$EFI_PART"
 fi
 
 echo "[+] Format BTRFS on $ROOT_PART and label 'archlinux'"
@@ -53,7 +67,7 @@ mount "$EFI_PART" /mnt/boot
 echo "[+] Enable swap"
 swapon "$SWAP_PART"
 
-echo "[+] Update mirrorlist (reflector)"
+echo "[+] Update mirrorlist (reflector) and install packages needed to run reflector if missing"
 pacman -Sy --noconfirm reflector
 reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 
@@ -70,7 +84,7 @@ genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt /bin/bash <<'CHROOT_EOF'
 set -euo pipefail
 
-# --- inside chroot ---
+# ---------- variables inside chroot ----------
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
 ROOT_PASS="passwd"
@@ -93,6 +107,12 @@ EOHOSTS
 
 echo "root:$ROOT_PASS" | chpasswd
 
+# Ensure mkinitcpio creates images appropriate for this setup
+if command -v mkinitcpio >/dev/null 2>&1; then
+  echo "[+] Regenerate initramfs for installed kernels (mkinitcpio -P)"
+  mkinitcpio -P || true
+fi
+
 # Install systemd-boot
 bootctl install
 
@@ -104,13 +124,13 @@ editor no
 auto-firmware yes
 EOLOADER
 
-# Ambil UUID root berdasarkan filesystem label 'archlinux'
+# Fetch UUID from label 'archlinux' (created by mkfs.btrfs -L archlinux)
 ROOT_UUID=$(blkid -s UUID -o value /dev/disk/by-label/archlinux || true)
 if [ -z "$ROOT_UUID" ]; then
-  echo "Warning: tidak dapat menemukan /dev/disk/by-label/archlinux — periksa label filesystem."
+  echo "WARNING: tidak menemukan /dev/disk/by-label/archlinux — pastikan label filesystem dibuat."
 fi
 
-# Tulis entry utama dan fallback, sertakan kernel params
+# Write main entry (Zen) and fallback; include kernel params
 cat <<EOENTRY > /boot/loader/entries/arch.conf
 title   Arch Linux (Zen Kernel)
 linux   /vmlinuz-linux-zen
@@ -127,36 +147,32 @@ initrd  /initramfs-linux-zen-fallback.img
 options root=UUID=$ROOT_UUID rw rootflags=subvol=@ $KERNEL_PARAMS
 EOFALL
 
-# --- AppArmor: enable service + load profiles ---
+# --- AppArmor ---
 systemctl enable apparmor
 
-# try to load default profiles now (apparmor-parser exists in package apparmor)
+# Load any available profiles now (best-effort)
 if command -v apparmor_parser >/dev/null 2>&1; then
-  echo "[+] Loading AppArmor profiles (if any bundled by package)"
   for p in /etc/apparmor.d/*; do
     [ -e "$p" ] || continue
-    # load or replace profile
     apparmor_parser -r "$p" || true
   done
 fi
 
-# If apparmor-utils installed, try set enforce mode for installed profiles (best-effort)
+# If aa-enforce exists, set profiles to enforce (best effort)
 if command -v aa-enforce >/dev/null 2>&1; then
   aa-enforce /etc/apparmor.d/* 2>/dev/null || true
 fi
 
-# --- audit: enable service + basic rules ---
+# --- audit ---
 systemctl enable auditd
 
-# Create basic audit rule set to monitor key events
 mkdir -p /etc/audit/rules.d
 cat <<'AUDITRULES' > /etc/audit/rules.d/99-security.rules
-# Basic audit rules
-# log audit failures
+# Basic audit rules (arch + b32/b64)
 -a always,exit -F arch=b64 -S execve -k exec
 -a always,exit -F arch=b32 -S execve -k exec
 
-# Monitor file attribute changes & important files
+# File and identity monitoring
 -w /etc/passwd -p wa -k identity
 -w /etc/group -p wa -k identity
 -w /etc/shadow -p wa -k identity
@@ -164,33 +180,32 @@ cat <<'AUDITRULES' > /etc/audit/rules.d/99-security.rules
 -w /etc/sudoers -p wa -k scope
 -w /etc/ssh/sshd_config -p wa -k ssh
 
-# Monitor mounts/unmounts and modules
+# Mounts / modules
 -a always,exit -F arch=b64 -S mount -k mounts
 -a always,exit -F arch=b32 -S mount -k mounts
 -a always,exit -F arch=b64 -S init_module,delete_module -k modules
 
-# Monitor network socket binds and listening
+# Network socket binds & listens
 -a always,exit -F arch=b64 -S bind -k net
 -a always,exit -F arch=b32 -S bind -k net
 -a always,exit -F arch=b64 -S listen -k net
 -a always,exit -F arch=b32 -S listen -k net
 
-# watch for changes to /etc/apparmor.d/
+# AppArmor directory changes
 -w /etc/apparmor.d/ -p wa -k apparmor
 
-# keep logs from auditd
+# xattr changes
 -a always,exit -F arch=b64 -S setxattr -k xattr
 AUDITRULES
 
-# load audit rules (augenrules is provided by audit package)
+# Load audit rules (try augenrules)
 if command -v augenrules >/dev/null 2>&1; then
   augenrules --load || true
 else
-  # fallback reload
   systemctl restart auditd || true
 fi
 
-# --- create user and sudoers ---
+# --- user + sudoers ---
 useradd -m -G wheel,audio,video,network,storage,optical,power,lp,scanner -s /bin/bash "$USERNAME"
 echo "$USERNAME:$USER_PASS" | chpasswd
 echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/wheel
@@ -201,11 +216,7 @@ systemctl enable iwd
 systemctl enable dhcpcd
 systemctl enable firewalld
 
-# --- Enable auditd (already enabled), ensure apparmor enabled & audit active ---
-systemctl enable auditd
-systemctl enable apparmor
-
-# --- Pacman hook to update systemd-boot entries when kernel/microcode change ---
+# --- Pacman hook to keep systemd-boot entries updated on kernel/microcode updates ---
 mkdir -p /etc/pacman.d/hooks
 cat <<'HOOK' > /etc/pacman.d/hooks/95-systemd-boot-entry.hook
 [Trigger]
@@ -242,18 +253,6 @@ options root=UUID=$ROOT_PART_UUID rw rootflags=subvol=@ $KERNEL_PARAMS
 EOE
 '
 HOOK
-
-# Attempt to reload piped services to ensure profiles/rules applied now
-if command -v apparmor_parser >/dev/null 2>&1; then
-  for p in /etc/apparmor.d/*; do
-    [ -e "$p" ] || continue
-    apparmor_parser -r "$p" || true
-  done
-fi
-
-if command -v augenrules >/dev/null 2>&1; then
-  augenrules --load || true
-fi
 
 echo "[+] Chroot configuration finished."
 CHROOT_EOF
