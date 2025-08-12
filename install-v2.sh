@@ -3,43 +3,68 @@ set -euo pipefail
 
 # -------------------------------------------------------------------
 # Arch Linux Auto Installer (NVMe optimized, ZEN kernel default)
-# Fully updated with dependency checks, safer password handling,
-# Wi‑Fi before pacstrap, dhcp, safe mkinitcpio hook insertion,
-# conditional microcode handling, systemd-boot checks, and Btrfs subvolumes
+# Final audited version with:
+#  - logging to /tmp (copied to /mnt/root/install.log at end)
+#  - UEFI mode check
+#  - interactive passwd inside chroot (requires TTY)
+#  - early Wi‑Fi connect (iwctl) before reflector/pacstrap
+#  - dhcpcd for DHCP with iwd
+#  - safe insertion of AppArmor into mkinitcpio HOOKS
+#  - systemd-boot install + conditional microcode handling
+#  - btrfs subvolumes with reusable function
+#  - kernel LSM + AppArmor boot params
 # -------------------------------------------------------------------
+
+# -----------------------
+# Logging (to /tmp, will copy to /mnt/root/install.log at end)
+# -----------------------
+LOGFILE="/tmp/arch-install-$(date +%Y%m%d-%H%M%S).log"
+exec > >(tee -a "$LOGFILE") 2>&1
+
+# -----------------------
+# Utils & safety checks
+# -----------------------
+info(){ echo "[$(date '+%F %T')] [INFO] $*"; }
+err(){ echo "[$(date '+%F %T')] [ERROR] $*" >&2; }
+
+# Require interactive TTY for passwd prompts
+if [ ! -t 0 ]; then
+  err "This script requires an interactive TTY (for passwd prompts). Run from local live ISO terminal." 
+  exit 1
+fi
+
+# Require UEFI
+if [ ! -d /sys/firmware/efi ]; then
+  err "System not booted in UEFI mode. systemd-boot requires UEFI. Aborting."
+  exit 1
+fi
 
 # -----------------------
 # Configurable variables
 # -----------------------
-DISK="/dev/nvme0n1"                 # NVMe device (user guaranteed NVMe)
+DISK="/dev/nvme0n1"                 # NVMe device — change if needed
 EFI_SIZE_MiB=1024
 SWAP_SIZE_MiB=6144
 BTRFS_LABEL="archlinux"
 EFI_LABEL="EFI"
 SWAP_LABEL="Swap"
 
-# Predefined hostname and username — EDIT HERE
-HOSTNAME="arch"   # Ganti sesuai keinginan
-USERNAME="user"   # Ganti sesuai keinginan
+# Predefined hostname and username — EDIT THESE
+HOSTNAME="arch"   # change as desired
+USERNAME="user"   # change as desired
 
-# Kernel LSM parameter to append to kernel cmdline
-KERNEL_LSM_PARAMS="lsm=landlock,lockdown,yama,integrity,apparmor,bpf"
+# Kernel LSM parameter to append to kernel cmdline (includes AppArmor flags)
+KERNEL_LSM_PARAMS="lsm=landlock,lockdown,yama,integrity,apparmor,bpf apparmor=1 security=apparmor"
 
-info(){ echo "[INFO] $*"; }
-err(){ echo "[ERROR] $*" >&2; }
-
-info "Using predefined hostname: $HOSTNAME"
-info "Using predefined username: $USERNAME"
+info "Using hostname='$HOSTNAME' and username='$USERNAME'"
 
 # -----------------------
 # Interactive inputs
 # -----------------------
-# Note: passwords will be set interactively inside chroot for best security.
 read -rp "Optional: Wi‑Fi SSID (leave empty to skip): " WIFI_SSID
 if [[ -n "$WIFI_SSID" ]]; then
-  # read a passphrase for iwctl prompt guidance (we won't pass it on CLI)
   read -rsp "(Optional) Wi‑Fi passphrase (will be prompted by iwctl if required): " WIFI_PLAIN; echo
-  info "Wi‑Fi passphrase recorded for interactive use (won't be passed on CLI)."
+  info "Wi‑Fi passphrase recorded for interactive use (not passed on CLI)."
 fi
 
 # -----------------------
@@ -48,12 +73,13 @@ fi
 REQUIRED=(parted mkfs.fat mkswap mkfs.btrfs btrfs pacstrap genfstab pacman blkid partprobe)
 for c in "${REQUIRED[@]}"; do
   if ! command -v "$c" &>/dev/null; then
-    err "Required command '$c' not found in live environment. Please run from Arch live ISO (or install the tool)."
+    err "Required command '$c' not found in live environment. Please run from an Arch live ISO (or install the tool)."
     exit 1
   fi
 done
+info "All required commands present in live environment."
 
-# iwctl is optional (used for Wi‑Fi). reflector is optional (we will install if missing).
+# iwctl optional, reflector optional (we'll install if missing)
 
 EFI_PART="${DISK}p1"
 SWAP_PART="${DISK}p2"
@@ -66,16 +92,15 @@ Planned partitions:
   - ${SWAP_PART} : Swap (${SWAP_SIZE_MiB} MiB)
   - ${ROOT_PART} : Btrfs (remaining space)
 Type the disk path again to confirm: ${DISK}
-*** You have 5 seconds to cancel (CTRL+C) before proceeding ***
 WARN
 read -r CONFIRM
-[[ "$CONFIRM" == "$DISK" ]] || { echo "Aborted."; exit 1; }
+[[ "$CONFIRM" == "$DISK" ]] || { err "Confirmation mismatch — aborted."; exit 1; }
 
 # Small safety pause
 for i in 5 4 3 2 1; do echo "Proceeding in ${i}... (Ctrl+C to cancel)"; sleep 1; done
 
 # -----------------------
-# Try to connect Wi‑Fi early (so reflector/pacstrap works)
+# Early Wi‑Fi connect (so reflector/pacstrap can use network)
 # -----------------------
 if [[ -n "${WIFI_SSID}" ]]; then
   if command -v iwctl &>/dev/null; then
@@ -83,12 +108,11 @@ if [[ -n "${WIFI_SSID}" ]]; then
     IFACE=$(iwctl station list | awk '/Interface/ {print $2; exit}') || IFACE="wlan0"
     if [[ -n "$IFACE" ]]; then
       echo "You may be prompted by iwctl to enter the passphrase."
-      iwctl station "$IFACE" connect "${WIFI_SSID}" || info "iwctl connect returned non-zero. Continue and reflectors/pacstrap may fail if no network."
-      # quick connectivity check
+      iwctl station "$IFACE" connect "${WIFI_SSID}" || info "iwctl connect returned non-zero — continuing, but pacstrap/reflector may fail without network"
       if ping -c1 8.8.8.8 &>/dev/null; then
         info "Network appears up"
       else
-        info "No network connectivity detected after iwctl. pacstrap/reflector may fail."
+        info "No network connectivity detected after iwctl"
       fi
     else
       info "No wireless interface reported by iwctl; skipping auto-connect"
@@ -110,7 +134,6 @@ parted -s "$DISK" set 1 esp on
 parted -s "$DISK" mkpart primary linux-swap ${EFI_END}MiB ${SWAP_END}MiB
 parted -s "$DISK" mkpart primary btrfs ${SWAP_END}MiB 100%
 partprobe "$DISK" || true
-# let udev settle so device nodes appear
 udevadm settle || true
 
 # -----------------------
@@ -123,7 +146,7 @@ swapon "$SWAP_PART"
 mkfs.btrfs -f -L "$BTRFS_LABEL" "$ROOT_PART"
 
 # -----------------------
-# Btrfs subvolumes and mount
+# Btrfs subvolumes & mount
 # -----------------------
 info "Creating btrfs subvolumes"
 mount "$ROOT_PART" /mnt
@@ -149,6 +172,9 @@ mount_subvol @cache /mnt/var/cache
 mkdir -p /mnt/boot
 mount "$EFI_PART" /mnt/boot
 
+# Ensure /mnt/root exists so we can copy logs and place helper scripts
+mkdir -p /mnt/root
+
 # -----------------------
 # Mirrors: ensure reflector available and run it
 # -----------------------
@@ -165,8 +191,7 @@ fi
 # Install base system (include dhcpcd so iwd can get DHCP)
 # -----------------------
 info "Installing base system and required packages (this may take a while)"
-# include dhcpcd so network works after first boot
-pacstrap -K /mnt base base-devel linux-zen linux-firmware intel-ucode vim sudo btrfs-progs git bash tzdata lz4 zstd iwd dhcpcd firewalld apparmor
+pacstrap -K /mnt base base-devel linux-zen linux-firmware intel-ucode vim sudo btrfs-progs git bash tzdata lz4 zstd iwd dhcpcd firewalld apparmor --noconfirm --needed
 
 # -----------------------
 # Generate fstab
@@ -175,11 +200,33 @@ info "Generating /etc/fstab"
 genfstab -U /mnt > /mnt/etc/fstab
 
 # -----------------------
-# Chroot configuration
+# Prepare chroot helper scripts (safe variable passing)
 # -----------------------
-info "Configuring system inside chroot"
-arch-chroot /mnt /bin/bash <<CHROOT
+info "Writing chroot helper scripts"
+cat > /mnt/root/installer_vars.sh <<VARS
+# installer variables (auto-generated)
+HOSTNAME='${HOSTNAME}'
+USERNAME='${USERNAME}'
+EFI_PART='${EFI_PART}'
+ROOT_PART='${ROOT_PART}'
+KERNEL_LSM_PARAMS='${KERNEL_LSM_PARAMS}'
+KERNEL_NAME='vmlinuz-linux-zen'
+INITRAMFS_NAME='initramfs-linux-zen.img'
+MCU_INTEL='/intel-ucode.img'
+VARS
+chmod 600 /mnt/root/installer_vars.sh
+
+cat > /mnt/root/setup.sh <<'CHROOT'
+#!/usr/bin/env bash
 set -euo pipefail
+
+# Load installer variables created from live environment
+. /root/installer_vars.sh
+
+info(){ echo "[$(date '+%F %T')] [CHROOT INFO] $*"; }
+err(){ echo "[$(date '+%F %T')] [CHROOT ERROR] $*" >&2; }
+
+info "Configuring system (inside chroot)"
 
 # timezone & locale
 ln -sf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
@@ -196,29 +243,28 @@ cat > /etc/hosts <<EOFHOSTS
 127.0.1.1	${HOSTNAME}.localdomain ${HOSTNAME}
 EOFHOSTS
 
-# create user (but set passwords interactively for max security)
+# create user and set passwords interactively
 useradd -m -G wheel,audio,video,storage,lp,optical,scanner -s /bin/bash "${USERNAME}"
 
-# set root and user passwords interactively
-echo "Please set the root password now:";
+echo "Please set the root password now:"
 passwd root
 
-echo "Please set the password for ${USERNAME} now:";
+echo "Please set the password for ${USERNAME} now:"
 passwd "${USERNAME}"
 
 # sudoers
 echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/wheel
 chmod 440 /etc/sudoers.d/wheel
 
-# ensure systemd-boot available before installation
+# ensure systemd-boot available
 if ! command -v bootctl &>/dev/null; then
   echo "bootctl not found — installing systemd package to get systemd-boot"
   pacman -Sy --noconfirm systemd || true
 fi
 
 # check EFI partition type
-if ! blkid -s TYPE -o value "${EFI_PART}" | grep -iq 'vfat'; then
-  echo "[!] Warning: EFI partition (${EFI_PART}) is not detected as vfat. bootctl may fail."
+if ! blkid -s TYPE -o value "$EFI_PART" | grep -iq 'vfat'; then
+  echo "[!] Warning: EFI partition ($EFI_PART) is not detected as vfat. bootctl may fail."
 fi
 
 # Install systemd-boot
@@ -226,7 +272,7 @@ if ! bootctl --path=/boot install &>/dev/null; then
   echo "[!] systemd-boot installation reported a non-fatal issue"
 fi
 
-# Ensure AppArmor in mkinitcpio HOOKS (insert before filesystems)
+# Ensure AppArmor in mkinitcpio HOOKS (insert before filesystems, safe)
 if ! grep -q "apparmor" /etc/mkinitcpio.conf; then
   if grep -q "filesystems" /etc/mkinitcpio.conf; then
     sed -i "s/\(filesystems\)/apparmor \1/" /etc/mkinitcpio.conf || true
@@ -236,28 +282,21 @@ if ! grep -q "apparmor" /etc/mkinitcpio.conf; then
 fi
 
 # kernel and boot loader entry (conditional microcode)
-ROOT_PARTUUID=$(blkid -s PARTUUID -o value ${ROOT_PART} || true)
-cat > /boot/loader/loader.conf <<LOADER
-default arch-zen
-timeout 3
-editor no
-LOADER
-
-KERNEL_NAME='vmlinuz-linux-zen'
-INITRAMFS_NAME='initramfs-linux-zen.img'
-MCU_INTEL='/intel-ucode.img'
+ROOT_PARTUUID=$(blkid -s PARTUUID -o value "$ROOT_PART" || true)
 ENTRY_FILE=/boot/loader/entries/arch-zen.conf
-cat > "$ENTRY_FILE" <<ENTRY
+mkdir -p /boot/loader/entries
+cat > "$ENTRY_FILE" <<EOF
 title   Arch Linux (zen)
 linux   /${KERNEL_NAME}
-ENTRY
+EOF
+# add microcode if present
 if [ -f "/boot/\${MCU_INTEL#'/'}" ]; then
-  sed -i "2iinitrd ${MCU_INTEL}" "$ENTRY_FILE"
+  printf 'initrd /%s\n' "${MCU_INTEL}" >> "$ENTRY_FILE"
 fi
-# always add the initramfs line after possible microcode
-sed -i "\$ainitrd /${INITRAMFS_NAME}" "$ENTRY_FILE"
-# append options as final line
-sed -i "\$aoptions root=PARTUUID=${ROOT_PARTUUID} rw rootflags=subvol=@ ${KERNEL_LSM_PARAMS}" "$ENTRY_FILE"
+# add initramfs
+printf 'initrd /%s\n' "${INITRAMFS_NAME}" >> "$ENTRY_FILE"
+# add options
+printf 'options root=PARTUUID=%s rw rootflags=subvol=@ %s\n' "$ROOT_PARTUUID" "$KERNEL_LSM_PARAMS" >> "$ENTRY_FILE"
 
 # enable services
 systemctl enable iwd || true
@@ -265,7 +304,7 @@ systemctl enable dhcpcd || true
 systemctl enable firewalld || true
 systemctl enable apparmor || true
 
-# pacman hooks for kernel & systemd-boot updates
+# pacman hooks
 mkdir -p /etc/pacman.d/hooks
 cat > /etc/pacman.d/hooks/90-linux-zen.hook <<HOOK
 [Trigger]
@@ -292,9 +331,23 @@ When = PostTransaction
 Exec = /usr/bin/bootctl update
 HOOK
 
-# regenerate initramfs
 mkinitcpio -P || true
+
+info "Chroot configuration complete"
 CHROOT
+
+chmod +x /mnt/root/setup.sh
+
+# -----------------------
+# Run chroot setup
+# -----------------------
+info "Entering arch-chroot to run setup script"
+arch-chroot /mnt /root/setup.sh
+
+# copy installer log into installed system for debugging
+if [[ -f "$LOGFILE" ]]; then
+  cp "$LOGFILE" /mnt/root/install.log || info "Could not copy log to /mnt/root — continuing"
+fi
 
 # -----------------------
 # Finalize network (attempt once more from live env if needed)
@@ -316,4 +369,5 @@ info "Installation finished — syncing and shutting down"
 sync
 umount -R /mnt || true
 swapoff ${SWAP_PART} || true
+info "Logfile saved to /root/install.log on installed system (if copy succeeded)."
 poweroff
