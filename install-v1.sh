@@ -22,7 +22,6 @@ btrfs subvolume create /mnt/@log
 btrfs subvolume create /mnt/@cache
 btrfs subvolume create /mnt/@tmp
 btrfs subvolume create /mnt/@srv
-btrfs subvolume create /mnt/@swap
 umount /mnt
 
 echo "[+] Mounting subvolumes"
@@ -30,19 +29,17 @@ mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@ $ROOT_P
 mkdir -p /mnt/home
 mkdir -p /mnt/tmp
 mkdir -p /mnt/srv
-mkdir -p /mnt/swap
 mkdir -p /mnt/var/log
 mkdir -p /mnt/var/cache
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@home  $ROOT_PART /mnt/home
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@tmp   $ROOT_PART /mnt/tmp
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@srv   $ROOT_PART /mnt/srv
-mount -o noatime,nodatacow,compress=no,subvol=@swap $ROOT_PART /mnt/swap
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@log   $ROOT_PART /mnt/var/log
 mount -o noatime,compress=zstd,ssd,discard=async,space_cache=v2,subvol=@cache $ROOT_PART /mnt/var/cache
 
 echo "[+] Mount EFI partition"
-mkdir -p /mnt/boot/efi
-mount $EFI_PART /mnt/boot/efi
+mkdir -p /mnt/boot
+mount $EFI_PART /mnt/boot
 
 echo "[+] Enable swap"
 swapon $SWAP_PART
@@ -52,7 +49,7 @@ pacman -Sy reflector --noconfirm
 reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 
 echo "[+] Install base system"
-pacstrap -K /mnt base base-devel linux linux-firmware intel-ucode vim sudo networkmanager grub efibootmgr btrfs-progs git bash tzdata lz4 zstd
+pacstrap -K /mnt base base-devel linux linux-firmware intel-ucode neovim sudo iwd btrfs-progs firewalld
 
 echo "[+] Generate fstab"
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -85,8 +82,9 @@ useradd -m -G wheel,audio,video,network,storage,optical,power,lp,scanner -s /bin
 echo "$USERNAME:$USER_PASS" | chpasswd
 echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/wheel
 
-echo "[+] Enable NetworkManager"
-systemctl enable NetworkManager
+echo "[+] Enable Firewalld"
+systemctl enable firewalld.service
+systemctl start firewalld.service
 EOF
 
 echo "[✓] Instalasi selesai! Sistem akan dimatikan dalam 5 detik..."
