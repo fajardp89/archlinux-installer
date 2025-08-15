@@ -14,7 +14,7 @@ SWAP_PART="/dev/nvme0n1p2"    # Swap partition
 ROOT_PART="/dev/nvme0n1p3"    # Root (BTRFS)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
-ROOT_PASS="password"
+ROOT_PASS="r!N4@O50689"
 USER_PASS="050689"
 
 # Opsi format partisi (ubah ke true/false sesuai kebutuhan)
