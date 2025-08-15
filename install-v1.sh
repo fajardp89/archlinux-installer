@@ -18,7 +18,7 @@ ROOT_PASS="r!N4@O50689"
 USER_PASS="050689"
 
 # Opsi format partisi (ubah ke true/false sesuai kebutuhan)
-FORMAT_EFI=false         # true jika ingin format ulang ESP
+FORMAT_EFI=true         # true jika ingin format ulang ESP
 FORMAT_SWAP=true         # true agar mkswap sebelum swapon
 
 # ====== CEK PRASYARAT ======
@@ -53,7 +53,7 @@ if [[ "$FORMAT_SWAP" == "true" ]]; then
 fi
 
 echo "[+] Format BTRFS di $ROOT_PART"
-mkfs.btrfs -f -L archlinux "$ROOT_PART"
+mkfs.btrfs -f -L ArchLinux "$ROOT_PART"
 
 # ====== LAYOUT SUBVOLUME ======
 mount "$ROOT_PART" /mnt
