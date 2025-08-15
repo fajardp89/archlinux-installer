@@ -9,13 +9,13 @@ set -Eeuo pipefail
 ###############################################
 
 # ====== KONFIGURASI YANG WAJIB DICEK ======
-EFI_PART="/dev/sdX1"     # ESP (FAT32)
-SWAP_PART="/dev/sdX2"    # Swap partition
-ROOT_PART="/dev/sdX3"    # Root (BTRFS)
+EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
+SWAP_PART="/dev/nvme0n1p2"    # Swap partition
+ROOT_PART="/dev/nvme0n1p3"    # Root (BTRFS)
 HOSTNAME="archlinux"
-USERNAME="user"
+USERNAME="fajar"
 ROOT_PASS="password"
-USER_PASS="password"
+USER_PASS="050689"
 
 # Opsi format partisi (ubah ke true/false sesuai kebutuhan)
 FORMAT_EFI=false         # true jika ingin format ulang ESP
