@@ -49,7 +49,7 @@ fi
 
 if [[ "$FORMAT_SWAP" == "true" ]]; then
   echo "[+] Buat swap di ${SWAP_PART}"
-  mkswap -f "$SWAP_PART"
+  mkswap -f -L Swap "$SWAP_PART"
 fi
 
 echo "[+] Format BTRFS di $ROOT_PART"
