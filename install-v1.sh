@@ -9,14 +9,13 @@ set -Eeuo pipefail
 ###############################################
 
 # ====== KONFIGURASI YANG WAJIB DICEK ======
-DISK="/dev/nvme0n1"      # Disk utama (GPT, UEFI)
-EFI_PART="${DISK}p1"     # ESP (FAT32)
-SWAP_PART="${DISK}p2"    # Swap partition
-ROOT_PART="${DISK}p3"    # Root (BTRFS)
-HOSTNAME="fajardp-archlinux-pc"
-USERNAME="fajar"
-ROOT_PASS="xxxxxx"
-USER_PASS="xxxxx"
+EFI_PART="/dev/sdX1"     # ESP (FAT32)
+SWAP_PART="/dev/sdX2"    # Swap partition
+ROOT_PART="/dev/sdX3"    # Root (BTRFS)
+HOSTNAME="archlinux"
+USERNAME="user"
+ROOT_PASS="password"
+USER_PASS="password"
 
 # Opsi format partisi (ubah ke true/false sesuai kebutuhan)
 FORMAT_EFI=false         # true jika ingin format ulang ESP
@@ -24,7 +23,7 @@ FORMAT_SWAP=true         # true agar mkswap sebelum swapon
 
 # ====== CEK PRASYARAT ======
 if [[ $EUID -ne 0 ]]; then
-  echo "[!] Jalankan sebagai root" >&2
+  echo "[!] Skrip ini harus dijalankan sebagai root" >&2
   exit 1
 fi
 if [[ ! -d /sys/firmware/efi ]]; then
@@ -82,8 +81,8 @@ mount "$EFI_PART" /mnt/boot
 # Aktifkan swap
 swapon "$SWAP_PART"
 
-# ====== MIRRORLIST ======
-echo "[+] Atur mirror Indonesia"
+# ====== MIRRORLIST (host/live environment) ======
+echo "[+] Atur mirror Indonesia (host)"
 pacman -Sy --noconfirm reflector
 reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 
@@ -91,24 +90,29 @@ reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirror
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux linux-firmware intel-ucode \
-  neovim sudo iwd btrfs-progs firewalld
+  btrfs-progs iwd sudo vim reflector firewalld
 
+# Fstab gunakan UUID
 genfstab -U /mnt >> /mnt/etc/fstab
 
-# Ambil UUID root untuk entri boot
+# Ambil UUID & PARTUUID root untuk entri boot
 ROOT_UUID=$(blkid -s UUID -o value "$ROOT_PART")
+ROOT_PARTUUID=$(blkid -s PARTUUID -o value "$ROOT_PART")
 
 # ====== KONFIGURASI DALAM CHROOT ======
 echo "[+] Konfigurasi dalam chroot"
 arch-chroot /mnt /bin/bash <<EOF
 set -Eeuo pipefail
 
+timedatectl set-ntp true
 ln -sf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 hwclock --systohc
-sed -i 's/^[[:space:]]*#[[:space:]]*en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+# Uncomment locale en_US.UTF-8
+sed -i 's/^[[:space:]]*#[[:space:]]*\(en_US.UTF-8 UTF-8\)/\1/' /etc/locale.gen
 locale-gen
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
-echo '$HOSTNAME' > /etc/hostname
+
+echo "$HOSTNAME" > /etc/hostname
 cat >/etc/hosts <<EOL
 127.0.0.1       localhost
 ::1             localhost
@@ -117,11 +121,13 @@ EOL
 
 echo "root:$ROOT_PASS" | chpasswd
 
+# ====== Bootloader: systemd-boot ======
 bootctl install
 cat >/boot/loader/loader.conf <<EOL
 default arch
 timeout 3
 editor 0
+console-mode max
 EOL
 
 cat >/boot/loader/entries/arch.conf <<EOL
@@ -140,11 +146,13 @@ initrd  /initramfs-linux-fallback.img
 options root=UUID=$ROOT_UUID rw rootflags=subvol=@
 EOL
 
+# ====== User & sudo ======
 useradd -m -U -G wheel,audio,video,storage,optical,power,lp,scanner -s /bin/bash "$USERNAME"
 echo "$USERNAME:$USER_PASS" | chpasswd
 echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00-wheel
 chmod 0440 /etc/sudoers.d/00-wheel
 
+# ====== Networking: iwd + networkd/resolved ======
 mkdir -p /etc/systemd/network
 cat >/etc/systemd/network/20-wired.network <<EOL
 [Match]
@@ -172,8 +180,10 @@ systemctl enable systemd-resolved.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
 
+# Pastikan initramfs up-to-date
 mkinitcpio -P
 
+# (Opsional) mirrorlist di sistem terpasang
 pacman -Sy --noconfirm reflector
 reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirrorlist || true
 EOF
@@ -184,4 +194,5 @@ umount -R /mnt
 swapoff "$SWAP_PART"
 trap - EXIT
 
+# Ganti ke 'reboot' jika ingin restart
 shutdown now
