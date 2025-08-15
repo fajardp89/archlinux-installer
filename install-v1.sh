@@ -12,7 +12,7 @@ set -Eeuo pipefail
 EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 SWAP_PART="/dev/nvme0n1p2"    # Swap partition
 ROOT_PART="/dev/nvme0n1p3"    # Root (BTRFS)
-HOSTNAME="archlinux"
+HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
 ROOT_PASS="password"
 USER_PASS="050689"
