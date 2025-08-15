@@ -90,7 +90,7 @@ reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirror
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux linux-firmware intel-ucode \
-  btrfs-progs iwd sudo vim reflector firewalld
+  btrfs-progs iwd sudo neovim reflector firewalld
 
 # Fstab gunakan UUID
 genfstab -U /mnt >> /mnt/etc/fstab
