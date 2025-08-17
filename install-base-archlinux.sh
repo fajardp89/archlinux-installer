@@ -15,7 +15,7 @@ ROOT_PART="/dev/nvme0n1p3"    # Root (BTRFS)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
 ROOT_PASS="r!N4@O50689#25"
-USER_PASS="O50689"
+USER_PASS="O50689#15"
 
 # Opsi format partisi (ubah ke true/false sesuai kebutuhan)
 FORMAT_EFI=true         # true jika ingin format ulang ESP
@@ -82,9 +82,9 @@ mount "$EFI_PART" /mnt/boot
 swapon "$SWAP_PART"
 
 # ====== MIRRORLIST (host/live environment) ======
-echo "[+] Atur mirror Indonesia (host)"
+echo "[+] Atur mirror Singapore (host)"
 pacman -Sy --noconfirm reflector
-reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country Singapore --latest 7 --sort rate --save /etc/pacman.d/mirrorlist
 
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
