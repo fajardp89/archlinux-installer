@@ -82,9 +82,9 @@ mount "$EFI_PART" /mnt/boot
 swapon "$SWAP_PART"
 
 # ====== MIRRORLIST (host/live environment) ======
-echo "[+] Atur mirror Singapore (host)"
+echo "[+] Atur mirror Indonesia (host)"
 pacman -Sy --noconfirm reflector
-reflector --country Singapore --latest 7 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country Indonesia --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
