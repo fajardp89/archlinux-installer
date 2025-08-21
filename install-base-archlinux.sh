@@ -84,7 +84,7 @@ swapon "$SWAP_PART"
 # ====== MIRRORLIST (host/live environment) ======
 echo "[+] Atur mirror archlinux (host)"
 pacman -Sy --noconfirm reflector
-reflector --age 12 --protocol https --sort age --latest 20 --save /etc/pacman.d/mirrorlist
+reflector --country Indonesia --country Singapore --country China --protocol https --age 6 --sort rate --latest 5 --save /etc/pacman.d/mirrorlist
 
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
