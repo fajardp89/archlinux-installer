@@ -185,7 +185,7 @@ mkinitcpio -P
 
 # (Opsional) mirrorlist di sistem terpasang
 pacman -Sy --noconfirm reflector
-reflector --age 12 --protocol https --sort age --latest 20 --save /etc/pacman.d/mirrorlist || true
+reflector --country Indonesia --country Singapore --country China --protocol https --age 6 --sort rate --latest 5 --save /etc/pacman.d/mirrorlist || true
 EOF
 
 # ====== BERESKAN ======
