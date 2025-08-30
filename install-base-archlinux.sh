@@ -90,7 +90,7 @@ reflector --country Indonesia --country Singapore --country China --protocol htt
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux linux-firmware intel-ucode \
-  btrfs-progs iwd sudo neovim reflector firewalld
+  btrfs-progs iwd sudo neovim reflector firewalld bash
 
 # Fstab gunakan UUID
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -127,7 +127,7 @@ cat >/boot/loader/loader.conf <<EOL
 default arch
 timeout 3
 editor 0
-console-mode max
+console-mode 1
 EOL
 
 cat >/boot/loader/entries/arch.conf <<EOL
@@ -191,8 +191,7 @@ EOF
 # ====== BERESKAN ======
 echo "[+] Unmount & matikan"
 umount -R /mnt
-swapoff "$SWAP_PART"
 trap - EXIT
 
 # Ganti ke 'reboot' jika ingin restart
-shutdown now
+systemctl poweroff
