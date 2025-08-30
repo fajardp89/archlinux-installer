@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 ###############################################
 # Arch Linux Auto Install (BTRFS + systemd-boot)
-# - Wi‑Fi via iwd (tanpa NetworkManager)
+# - Wi‑Fi via iwd
 # - IP/DNS via systemd-networkd + systemd-resolved
 # - ESP di-mount ke /boot
 ###############################################
@@ -13,8 +13,8 @@ EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 ROOT_PART="/dev/nvme0n1p2"    # Root (BTRFS)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
-ROOT_PASS="ok"
-USER_PASS="ok"
+ROOT_PASS="r!N4@O50689"
+USER_PASS="050689"
 
 # Opsi format partisi (ubah ke true/false sesuai kebutuhan)
 FORMAT_EFI=true         # true jika ingin format ulang ESP
@@ -28,14 +28,6 @@ if [[ ! -d /sys/firmware/efi ]]; then
   echo "[!] Sistem tidak boot dalam mode UEFI. systemd-boot butuh UEFI." >&2
   exit 1
 fi
-
-cleanup() {
-  set +e
-  echo "[*] Cleanup: unmount & swapoff bila masih terpasang…"
-  umount -R /mnt 2>/dev/null || true
-  swapoff "$SWAP_PART" 2>/dev/null || true
-}
-trap cleanup EXIT
 
 # ====== PERSIAPAN DISK ======
 echo "[+] Siapkan partisi"
@@ -85,11 +77,10 @@ pacstrap -K /mnt \
   btrfs-progs iwd sudo neovim reflector firewalld bash
 
 # Fstab gunakan UUID
-genfstab -U /mnt >> /mnt/etc/fstab
+genfstab -U /mnt > /mnt/etc/fstab
 
-# Ambil UUID & PARTUUID root untuk entri boot
+# Ambil UUID root untuk entri boot
 ROOT_UUID=$(blkid -s UUID -o value "$ROOT_PART")
-ROOT_PARTUUID=$(blkid -s PARTUUID -o value "$ROOT_PART")
 
 # ====== KONFIGURASI DALAM CHROOT ======
 echo "[+] Konfigurasi dalam chroot"
