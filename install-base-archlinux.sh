@@ -130,7 +130,7 @@ options root=UUID=$ROOT_UUID rw rootflags=subvol=@
 EOL
 
 # ====== User & sudo ======
-useradd -m -U -G wheel,audio,video,storage,optical,power,lp,scanner -s /bin/bash "$USERNAME"
+useradd -m -U -G wheel,audio,video,storage,optical,power,lp,scanner,ftp,http,sys,rfkill,tty,disk,input,network -s /bin/bash "$USERNAME"
 echo "$USERNAME:$USER_PASS" | chpasswd
 echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00-wheel
 chmod 0440 /etc/sudoers.d/00-wheel
