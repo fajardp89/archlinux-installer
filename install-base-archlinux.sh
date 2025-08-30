@@ -10,8 +10,7 @@ set -Eeuo pipefail
 
 # ====== KONFIGURASI YANG WAJIB DICEK ======
 EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
-SWAP_PART="/dev/nvme0n1p2"    # Swap partition
-ROOT_PART="/dev/nvme0n1p3"    # Root (BTRFS)
+ROOT_PART="/dev/nvme0n1p2"    # Root (BTRFS)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
 ROOT_PASS="ok"
@@ -19,7 +18,6 @@ USER_PASS="ok"
 
 # Opsi format partisi (ubah ke true/false sesuai kebutuhan)
 FORMAT_EFI=true         # true jika ingin format ulang ESP
-FORMAT_SWAP=true         # true agar mkswap sebelum swapon
 
 # ====== CEK PRASYARAT ======
 if [[ $EUID -ne 0 ]]; then
@@ -47,11 +45,6 @@ if [[ "$FORMAT_EFI" == "true" ]]; then
   mkfs.fat -F32 -n ESP "$EFI_PART"
 fi
 
-if [[ "$FORMAT_SWAP" == "true" ]]; then
-  echo "[+] Buat swap di ${SWAP_PART}"
-  mkswap -f -L Swap "$SWAP_PART"
-fi
-
 echo "[+] Format BTRFS di $ROOT_PART"
 mkfs.btrfs -f -L ArchLinux "$ROOT_PART"
 
@@ -59,27 +52,26 @@ mkfs.btrfs -f -L ArchLinux "$ROOT_PART"
 mount "$ROOT_PART" /mnt
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@home
-btrfs subvolume create /mnt/@log
+btrfs subvolume create /mnt/@root
+btrfs subvolume create /mnt/@srv
 btrfs subvolume create /mnt/@cache
 btrfs subvolume create /mnt/@tmp
-btrfs subvolume create /mnt/@srv
+btrfs subvolume create /mnt/@log
 umount /mnt
 
 # ====== MOUNT DENGAN OPSI YANG BAIK ======
 MNT_OPTS="noatime,compress=zstd,ssd,discard=async,space_cache=v2"
 mount -o ${MNT_OPTS},subvol=@ "$ROOT_PART" /mnt
-mkdir -p /mnt/{home,tmp,srv,var/log,var/cache,boot}
+mkdir -p /mnt/{home,root,srv,boot,var/cache,var/tmp,var/log}
 mount -o ${MNT_OPTS},subvol=@home  "$ROOT_PART" /mnt/home
-mount -o ${MNT_OPTS},subvol=@tmp   "$ROOT_PART" /mnt/tmp
+mount -o ${MNT_OPTS},subvol=@root  "$ROOT_PART" /mnt/root
 mount -o ${MNT_OPTS},subvol=@srv   "$ROOT_PART" /mnt/srv
-mount -o ${MNT_OPTS},subvol=@log   "$ROOT_PART" /mnt/var/log
 mount -o ${MNT_OPTS},subvol=@cache "$ROOT_PART" /mnt/var/cache
+mount -o ${MNT_OPTS},subvol=@tmp   "$ROOT_PART" /mnt/var/tmp
+mount -o ${MNT_OPTS},subvol=@log   "$ROOT_PART" /mnt/var/log
 
 # ESP di-mount ke /boot
 mount "$EFI_PART" /mnt/boot
-
-# Aktifkan swap
-swapon "$SWAP_PART"
 
 # ====== MIRRORLIST (host/live environment) ======
 echo "[+] Atur mirror archlinux (host)"
