@@ -68,7 +68,7 @@ mount "$EFI_PART" /mnt/boot
 # ====== MIRRORLIST (host/live environment) ======
 echo "[+] Atur mirror archlinux (host)"
 pacman -Sy --noconfirm reflector
-reflector --country Indonesia --country Singapore --country China --protocol https --age 6 --sort rate --latest 5 --save /etc/pacman.d/mirrorlist
+reflector --country Germany --country Indonesia --country Singapore --country China --country Taiwan --country Japan --protocol https --age 6 --sort rate --latest 7 --save /etc/pacman.d/mirrorlist
 
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
@@ -168,7 +168,7 @@ mkinitcpio -P
 
 # (Opsional) mirrorlist di sistem terpasang
 pacman -Sy --noconfirm reflector
-reflector --country Indonesia --country Singapore --country China --protocol https --age 6 --sort rate --latest 5 --save /etc/pacman.d/mirrorlist || true
+reflector --country Germany --country Indonesia --country Singapore --country China --country Taiwan --country Japan --protocol https --age 6 --sort rate --latest 7 --save /etc/pacman.d/mirrorlist || true
 EOF
 
 # ====== BERESKAN ======
