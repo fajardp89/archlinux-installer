@@ -74,7 +74,7 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux linux-firmware intel-ucode \
-  btrfs-progs iwd sudo neovim reflector firewalld bash
+  btrfs-progs iwd sudo nano reflector firewalld bash plasma-desktop konsole sddm
 
 # Fstab gunakan UUID
 genfstab -U /mnt > /mnt/etc/fstab
@@ -162,6 +162,7 @@ systemctl enable systemd-networkd.service
 systemctl enable systemd-resolved.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
+systemctl enable sddm.service
 
 # Pastikan initramfs up-to-date
 mkinitcpio -P
