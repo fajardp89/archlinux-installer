@@ -158,7 +158,7 @@ chown $USERNAME:$USERNAME /home/$USERNAME/.zshrc
 # ====== Buat .zprofile untuk auto-start Sway ======
 cat >/home/$USERNAME/.zprofile <<'EOL'
 # Auto-start Sway setelah login via greetd
-if [ -z "$WAYLAND_DISPLAY" ]; then
+if [ -z "\$WAYLAND_DISPLAY" ]; then
     exec sway
 fi
 EOL
