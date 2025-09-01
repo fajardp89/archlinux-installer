@@ -164,6 +164,13 @@ mkdir -p /home/$USERNAME/.config/sway
 cp /etc/sway/config /home/$USERNAME/.config/sway/config
 chown -R $USERNAME:$USERNAME /home/$USERNAME/.config/sway
 
+# ====== Install yay (AUR) untuk user ======
+su - $USERNAME <<'EOF'
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si --noconfirm
+EOF
+
 # ====== Konfigurasi greetd untuk Sway ======
 cat >/etc/greetd/config.toml <<EOL
 [default]
