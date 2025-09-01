@@ -148,6 +148,14 @@ export SAVEHIST=10000
 EOL
 chown $USERNAME:$USERNAME /home/$USERNAME/.zshrc
 
+# ====== Konfigurasi greetd untuk Sway ======
+cat >/etc/greetd/config.toml <<EOL
+[default]
+command = "tuigreet"
+user = "$USERNAME"
+tty = "tty1"
+EOL
+
 # ====== Networking: iwd + networkd/resolved ======
 mkdir -p /etc/systemd/network
 cat >/etc/systemd/network/20-wired.network <<EOL
@@ -175,7 +183,7 @@ systemctl enable systemd-networkd.service
 systemctl enable systemd-resolved.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
-systemctl enable sddm.service
+systemctl enable greetd
 
 # Pastikan initramfs up-to-date
 mkinitcpio -P
