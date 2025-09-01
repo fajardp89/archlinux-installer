@@ -199,6 +199,7 @@ systemctl enable systemd-networkd.service
 systemctl enable systemd-resolved.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
+systemctl enable pipewire.service pipewire-pulse.service wireplumber.service
 systemctl enable greetd.service
 
 # Pastikan initramfs up-to-date
