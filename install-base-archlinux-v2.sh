@@ -73,7 +73,7 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
-  base base-devel linux linux-firmware intel-ucode \
+  base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode \
   btrfs-progs iwd sudo neovim reflector firewalld bash plasma-desktop konsole sddm
 
 # Fstab gunakan UUID
