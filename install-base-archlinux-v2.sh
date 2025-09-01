@@ -107,25 +107,25 @@ echo "root:$ROOT_PASS" | chpasswd
 # ====== Bootloader: systemd-boot ======
 bootctl install
 cat >/boot/loader/loader.conf <<EOL
-default arch
+default arch-zen.conf
 timeout 3
 editor 0
 console-mode 1
 EOL
 
-cat >/boot/loader/entries/arch.conf <<EOL
-title   Arch Linux
-linux   /vmlinuz-linux
+cat >/boot/loader/entries/arch-zen.conf <<EOL
+title   Arch Linux (Zen Kernel)
+linux   /vmlinuz-linux-zen
 initrd  /intel-ucode.img
-initrd  /initramfs-linux.img
+initrd  /initramfs-linux-zen.img
 options root=UUID=$ROOT_UUID rw rootflags=subvol=@
 EOL
 
-cat >/boot/loader/entries/arch-fallback.conf <<EOL
-title   Arch Linux (fallback)
-linux   /vmlinuz-linux
+cat >/boot/loader/entries/arch-zen-fallback.conf <<EOL
+title   Arch Linux (Zen Kernel fallback)
+linux   /vmlinuz-linux-zen
 initrd  /intel-ucode.img
-initrd  /initramfs-linux-fallback.img
+initrd  /initramfs-linux-zen-fallback.img
 options root=UUID=$ROOT_UUID rw rootflags=subvol=@
 EOL
 
