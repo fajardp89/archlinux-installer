@@ -13,8 +13,8 @@ EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 ROOT_PART="/dev/nvme0n1p2"    # Root (BTRFS)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
-ROOT_PASS="r!N4@O50689"
-USER_PASS="050689"
+ROOT_PASS="mamah@R1na#25"
+USER_PASS="O50689#15"
 
 # Opsi format partisi (ubah ke true/false sesuai kebutuhan)
 FORMAT_EFI=true         # true jika ingin format ulang ESP
