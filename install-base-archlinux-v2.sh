@@ -138,6 +138,16 @@ chmod 0440 /etc/sudoers.d/00-wheel
 # ====== Set root shell ke Zsh ======
 chsh -s /bin/zsh root
 
+# ====== Buat .zshrc minimal untuk user ======
+cat >/home/$USERNAME/.zshrc <<EOL
+# Path, alias, dan prompt sederhana
+export PATH=\$HOME/bin:/usr/local/bin:\$PATH
+alias ll='ls -lh --color=auto'
+export HISTSIZE=10000
+export SAVEHIST=10000
+EOL
+chown $USERNAME:$USERNAME /home/$USERNAME/.zshrc
+
 # ====== Networking: iwd + networkd/resolved ======
 mkdir -p /etc/systemd/network
 cat >/etc/systemd/network/20-wired.network <<EOL
