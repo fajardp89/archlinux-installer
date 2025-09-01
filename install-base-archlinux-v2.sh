@@ -75,7 +75,7 @@ echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode \
   btrfs-progs iwd sudo micro reflector firewalld bash git sway foot swaybg \
-  swayidle swaylock polkit pipewire pipewire-pulse wireplumber \
+  swayidle swaylock polkit brightnessctl pipewire pipewire-pulse wireplumber \
   pipewire-alsa pipewire-jack alsa-utils rtkit sof-firmware
 
 # Fstab gunakan UUID
