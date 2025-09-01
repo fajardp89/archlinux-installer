@@ -74,7 +74,8 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode \
-  btrfs-progs iwd sudo neovim reflector firewalld bash zsh plasma-desktop konsole sddm
+  btrfs-progs iwd sudo neovim reflector firewalld bash zsh sway foot swaybg \
+  swayidle swaylock polkit greetd-tuigreet
 
 # Fstab gunakan UUID
 genfstab -U /mnt > /mnt/etc/fstab
@@ -148,6 +149,21 @@ export SAVEHIST=10000
 EOL
 chown $USERNAME:$USERNAME /home/$USERNAME/.zshrc
 
+# ====== Buat .zprofile untuk auto-start Sway ======
+cat >/home/$USERNAME/.zprofile <<'EOL'
+# Auto-start Sway setelah login via greetd
+if [ -z "$WAYLAND_DISPLAY" ]; then
+    exec sway
+fi
+EOL
+chown $USERNAME:$USERNAME /home/$USERNAME/.zprofile
+chmod 644 /home/$USERNAME/.zprofile
+
+# ====== Setup folder sway config user ======
+mkdir -p /home/$USERNAME/.config/sway
+cp /etc/sway/config /home/$USERNAME/.config/sway/config
+chown -R $USERNAME:$USERNAME /home/$USERNAME/.config/sway
+
 # ====== Konfigurasi greetd untuk Sway ======
 cat >/etc/greetd/config.toml <<EOL
 [default]
@@ -183,7 +199,7 @@ systemctl enable systemd-networkd.service
 systemctl enable systemd-resolved.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
-systemctl enable greetd
+systemctl enable greetd.service
 
 # Pastikan initramfs up-to-date
 mkinitcpio -P
