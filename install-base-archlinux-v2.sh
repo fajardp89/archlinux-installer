@@ -74,7 +74,7 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode \
-  btrfs-progs iwd sudo neovim reflector firewalld bash zsh git sway foot swaybg \
+  btrfs-progs iwd sudo micro reflector firewalld bash zsh git sway foot swaybg \
   swayidle swaylock polkit greetd-tuigreet pipewire pipewire-pulse wireplumber \
   pipewire-alsa pipewire-jack alsa-utils rtkit sof-firmware
 
