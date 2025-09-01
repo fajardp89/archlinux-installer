@@ -143,7 +143,7 @@ echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00-wheel
 chmod 0440 /etc/sudoers.d/00-wheel
 
 # ====== Set root shell ke Zsh ======
-chsh -s /bin/zsh root
+chsh --shell /bin/zsh root
 
 # ====== Buat .zshrc minimal untuk user ======
 cat >/home/$USERNAME/.zshrc <<EOL
