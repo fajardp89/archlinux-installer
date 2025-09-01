@@ -74,7 +74,7 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode \
-  btrfs-progs iwd sudo neovim reflector firewalld bash plasma-desktop konsole sddm
+  btrfs-progs iwd sudo neovim reflector firewalld bash zsh plasma-desktop konsole sddm
 
 # Fstab gunakan UUID
 genfstab -U /mnt > /mnt/etc/fstab
@@ -130,10 +130,13 @@ options root=UUID=$ROOT_UUID rw rootflags=subvol=@
 EOL
 
 # ====== User & sudo ======
-useradd -m -U -G wheel,audio,video,storage,optical,power,lp,scanner,ftp,http,sys,rfkill,tty,disk,input,network -s /bin/bash "$USERNAME"
+useradd -m -U -G wheel,audio,video,storage,optical,power,lp,scanner,ftp,http,sys,rfkill,tty,disk,input,network -s /bin/zsh "$USERNAME"
 echo "$USERNAME:$USER_PASS" | chpasswd
 echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00-wheel
 chmod 0440 /etc/sudoers.d/00-wheel
+
+# ====== Set root shell ke Zsh ======
+chsh -s /bin/zsh root
 
 # ====== Networking: iwd + networkd/resolved ======
 mkdir -p /etc/systemd/network
