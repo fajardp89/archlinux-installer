@@ -74,8 +74,8 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode \
-  btrfs-progs iwd sudo micro reflector firewalld bash zsh git sway foot swaybg \
-  swayidle swaylock polkit greetd-tuigreet pipewire pipewire-pulse wireplumber \
+  btrfs-progs iwd sudo micro reflector firewalld bash git sway foot swaybg \
+  swayidle swaylock polkit pipewire pipewire-pulse wireplumber \
   pipewire-alsa pipewire-jack alsa-utils rtkit sof-firmware
 
 # Fstab gunakan UUID
@@ -137,55 +137,15 @@ options root=UUID=$ROOT_UUID rw rootflags=subvol=@
 EOL
 
 # ====== User & sudo ======
-useradd -m -U -G wheel,audio,video,storage,optical,power,lp,scanner,ftp,http,sys,rfkill,tty,disk,input,network -s /bin/zsh "$USERNAME"
+useradd -m -U -G wheel,audio,video,storage,optical,power,lp,scanner,ftp,http,sys,rfkill,tty,disk,input,network -s /bin/bash "$USERNAME"
 echo "$USERNAME:$USER_PASS" | chpasswd
 echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00-wheel
 chmod 0440 /etc/sudoers.d/00-wheel
-
-# ====== Set root shell ke Zsh ======
-chsh --shell /bin/zsh root
-
-# ====== Buat .zshrc minimal untuk user ======
-cat >/home/$USERNAME/.zshrc <<EOL
-# Path, alias, dan prompt sederhana
-export PATH=\$HOME/bin:/usr/local/bin:\$PATH
-alias ll='ls -lh --color=auto'
-export HISTSIZE=10000
-export SAVEHIST=10000
-EOL
-chown $USERNAME:$USERNAME /home/$USERNAME/.zshrc
-
-# ====== Buat .zprofile untuk auto-start Sway ======
-cat >/home/$USERNAME/.zprofile <<'EOL'
-# Auto-start Sway setelah login via greetd
-if [ -z "\$WAYLAND_DISPLAY" ]; then
-    exec sway
-fi
-EOL
-chown $USERNAME:$USERNAME /home/$USERNAME/.zprofile
-chmod 644 /home/$USERNAME/.zprofile
 
 # ====== Setup folder sway config user ======
 mkdir -p /home/$USERNAME/.config/sway
 cp /etc/sway/config /home/$USERNAME/.config/sway/config
 chown -R $USERNAME:$USERNAME /home/$USERNAME/.config/sway
-
-# ====== Install yay (AUR) untuk user ======
-su - $USERNAME <<'EOUSER'
-export XDG_RUNTIME_DIR=/tmp/xdg
-mkdir -p $XDG_RUNTIME_DIR
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg -si --noconfirm || true
-EOUSER
-
-# ====== Konfigurasi greetd untuk Sway ======
-cat >/etc/greetd/config.toml <<EOL
-[default]
-command = "tuigreet"
-user = "$USERNAME"
-tty = "tty1"
-EOL
 
 # ====== Networking: iwd + networkd/resolved ======
 mkdir -p /etc/systemd/network
@@ -215,7 +175,6 @@ systemctl enable systemd-resolved.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
 systemctl enable pipewire.service pipewire-pulse.service wireplumber.service
-systemctl enable greetd.service
 
 # Pastikan initramfs up-to-date
 mkinitcpio -P
