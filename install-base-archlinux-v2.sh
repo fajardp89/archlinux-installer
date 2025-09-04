@@ -75,7 +75,7 @@ echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode \
   btrfs-progs iwd sudo neovim reflector firewalld bash git \
-  plasma-desktop konsole sddm \
+  plasma-desktop foot \
   pipewire pipewire-pulse wireplumber pipewire-alsa pipewire-jack alsa-utils rtkit sof-firmware 
 
 # Fstab gunakan UUID
