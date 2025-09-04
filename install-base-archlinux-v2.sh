@@ -44,23 +44,13 @@ mkfs.btrfs -f -L ArchLinux "$ROOT_PART"
 mount "$ROOT_PART" /mnt
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@home
-btrfs subvolume create /mnt/@root
-btrfs subvolume create /mnt/@srv
-btrfs subvolume create /mnt/@cache
-btrfs subvolume create /mnt/@tmp
-btrfs subvolume create /mnt/@log
 umount /mnt
 
 # ====== MOUNT DENGAN OPSI YANG BAIK ======
 MNT_OPTS="noatime,compress=zstd,ssd,discard=async,space_cache=v2"
 mount -o ${MNT_OPTS},subvol=@ "$ROOT_PART" /mnt
-mkdir -p /mnt/{home,root,srv,boot,var/cache,var/tmp,var/log}
+mkdir -p /mnt/{home,boot}
 mount -o ${MNT_OPTS},subvol=@home  "$ROOT_PART" /mnt/home
-mount -o ${MNT_OPTS},subvol=@root  "$ROOT_PART" /mnt/root
-mount -o ${MNT_OPTS},subvol=@srv   "$ROOT_PART" /mnt/srv
-mount -o ${MNT_OPTS},subvol=@cache "$ROOT_PART" /mnt/var/cache
-mount -o ${MNT_OPTS},subvol=@tmp   "$ROOT_PART" /mnt/var/tmp
-mount -o ${MNT_OPTS},subvol=@log   "$ROOT_PART" /mnt/var/log
 
 # ESP di-mount ke /boot
 mount "$EFI_PART" /mnt/boot
