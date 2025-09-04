@@ -142,11 +142,6 @@ echo "$USERNAME:$USER_PASS" | chpasswd
 echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00-wheel
 chmod 0440 /etc/sudoers.d/00-wheel
 
-# ====== Setup folder sway config user ======
-mkdir -p /home/$USERNAME/.config/sway
-cp /etc/sway/config /home/$USERNAME/.config/sway/config
-chown -R $USERNAME:$USERNAME /home/$USERNAME/.config/sway
-
 # ====== Networking: iwd + networkd/resolved ======
 mkdir -p /etc/systemd/network
 cat >/etc/systemd/network/20-wired.network <<EOL
