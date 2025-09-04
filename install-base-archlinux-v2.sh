@@ -75,7 +75,7 @@ ROOT_UUID=$(blkid -s UUID -o value "$ROOT_PART")
 
 # ====== KONFIGURASI DALAM CHROOT ======
 echo "[+] Konfigurasi dalam chroot"
-arch-chroot /mnt /bin/bash <<EOF
+arch-chroot /mnt <<EOF
 set -Eeuo pipefail
 
 timedatectl set-ntp true
