@@ -64,7 +64,7 @@ reflector --country Singapore --age 12 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode \
-  btrfs-progs iwd sudo neovim reflector firewalld bash git \
+  btrfs-progs iwd sudo neovim reflector firewalld bash \
   plasma-desktop konsole 
 
 # Fstab gunakan UUID
