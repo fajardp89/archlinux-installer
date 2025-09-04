@@ -13,8 +13,8 @@ EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 ROOT_PART="/dev/nvme0n1p2"    # Root (BTRFS)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
-ROOT_PASS="r!N4@O50689#15"
-USER_PASS="05O689#25"
+ROOT_PASS="r!N4@O50689#25"
+USER_PASS="050689"
 
 # Opsi format partisi (ubah ke true/false sesuai kebutuhan)
 FORMAT_EFI=true         # true jika ingin format ulang ESP
@@ -74,9 +74,9 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode \
-  btrfs-progs iwd sudo micro reflector firewalld bash git sway foot swaybg \
-  swayidle swaylock polkit brightnessctl pipewire pipewire-pulse wireplumber \
-  pipewire-alsa pipewire-jack alsa-utils rtkit sof-firmware
+  btrfs-progs iwd sudo neovim reflector firewalld bash git \
+  plasma-desktop konsole sddm \
+  pipewire pipewire-pulse wireplumber pipewire-alsa pipewire-jack alsa-utils rtkit sof-firmware 
 
 # Fstab gunakan UUID
 genfstab -U /mnt > /mnt/etc/fstab
@@ -174,7 +174,7 @@ systemctl enable systemd-networkd.service
 systemctl enable systemd-resolved.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
-systemctl enable pipewire.service pipewire-pulse.service wireplumber.service
+systemctl enable sddm.service
 
 # Pastikan initramfs up-to-date
 mkinitcpio -P
