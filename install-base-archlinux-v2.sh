@@ -50,7 +50,7 @@ umount /mnt
 MNT_OPTS="noatime,compress=zstd,ssd,discard=async,space_cache=v2"
 mount -o ${MNT_OPTS},subvol=@ "$ROOT_PART" /mnt
 mkdir -p /mnt/{home,boot}
-mount -o ${MNT_OPTS},subvol=@home  "$ROOT_PART" /mnt/home
+mount -o ${MNT_OPTS},subvol=@home "$ROOT_PART" /mnt/home
 
 # ESP di-mount ke /boot
 mount "$EFI_PART" /mnt/boot
