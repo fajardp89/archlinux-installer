@@ -97,11 +97,6 @@ sed -i 's/^[[:space:]]*#[[:space:]]*\(en_US.UTF-8 UTF-8\)/\1/' /etc/locale.gen
 locale-gen
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 
-# ====== Edit pacman.conf ======
-sed -i 's/^#Color/Color/' /etc/pacman.conf
-grep -qxF 'ILoveCandy' /etc/pacman.conf || echo 'ILoveCandy' >> /etc/pacman.conf
-sed -i '/\[multilib\]/{n;s/^#Include/Include/}' /etc/pacman.conf
-
 echo "$HOSTNAME" > /etc/hostname
 cat >/etc/hosts <<EOL
 127.0.0.1       localhost
@@ -169,7 +164,6 @@ systemctl enable systemd-networkd.service
 systemctl enable systemd-resolved.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
-systemctl enable sddm.service
 
 # Pastikan initramfs up-to-date
 mkinitcpio -P
