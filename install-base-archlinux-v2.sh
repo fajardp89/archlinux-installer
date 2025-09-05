@@ -71,7 +71,8 @@ echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode \
   btrfs-progs iwd sudo neovim reflector firewalld bash \
-  plasma-desktop konsole 
+  plasma-desktop konsole sddm \
+  pipewire pipewire-pulse wireplumber pipewire-alsa pipewire-jack alsa-utils rtkit sof-firmware plasma-pa
 
 # Fstab gunakan UUID
 genfstab -U /mnt > /mnt/etc/fstab
@@ -159,6 +160,7 @@ systemctl enable systemd-networkd.service
 systemctl enable systemd-resolved.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
+systemctl enable sddm.service
 
 # Pastikan initramfs up-to-date
 mkinitcpio -P
