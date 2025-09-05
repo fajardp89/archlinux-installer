@@ -44,13 +44,19 @@ mkfs.btrfs -f -L ArchLinux "$ROOT_PART"
 mount "$ROOT_PART" /mnt
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@log
+btrfs subvolume create /mnt/@cache
+btrfs subvolume create /mnt/@tmp
 umount /mnt
 
 # ====== MOUNT DENGAN OPSI YANG BAIK ======
 MNT_OPTS="noatime,compress=zstd,ssd,discard=async,space_cache=v2"
 mount -o ${MNT_OPTS},subvol=@ "$ROOT_PART" /mnt
-mkdir -p /mnt/{home,boot}
+mkdir -p /mnt/{home,boot,var/log,var/cache,var/tmp}
 mount -o ${MNT_OPTS},subvol=@home "$ROOT_PART" /mnt/home
+mount -o ${MNT_OPTS},subvol=@log "$ROOT_PART" /mnt/var/log
+mount -o ${MNT_OPTS},subvol=@cache "$ROOT_PART" /mnt/var/cache
+mount -o ${MNT_OPTS},subvol=@tmp "$ROOT_PART" /mnt/var/tmp
 
 # ESP di-mount ke /boot
 mount "$EFI_PART" /mnt/boot
@@ -58,7 +64,7 @@ mount "$EFI_PART" /mnt/boot
 # ====== MIRRORLIST (host/live environment) ======
 echo "[+] Atur mirror archlinux (host)"
 pacman -Sy --noconfirm reflector
-reflector --country Singapore --age 12 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country Singapore --country Indonesia --age 6 --sort rate --save /etc/pacman.d/mirrorlist
 
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
@@ -159,7 +165,7 @@ mkinitcpio -P
 
 # (Opsional) mirrorlist di sistem terpasang
 pacman -Sy --noconfirm reflector
-reflector --country Singapore --age 12 --sort rate --save /etc/pacman.d/mirrorlist || true
+reflector --country Singapore --country Indonesia --age 6 --sort rate --save /etc/pacman.d/mirrorlist || true
 EOF
 
 # ====== BERESKAN ======
