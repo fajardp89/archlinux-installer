@@ -11,7 +11,7 @@ set -Eeuo pipefail
 # ====== KONFIGURASI YANG WAJIB DICEK ======
 EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 ROOT_PART="/dev/nvme0n1p2"    # Root (BTRFS)
-HOSTNAME="fajardp-archlinux-pc"
+HOSTNAME="archlinux-pc"
 USERNAME="fajar"
 ROOT_PASS="r!N4@O50689#25"
 USER_PASS="050689"
