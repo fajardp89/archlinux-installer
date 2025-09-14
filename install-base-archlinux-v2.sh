@@ -10,7 +10,8 @@ set -Eeuo pipefail
 
 # ====== KONFIGURASI YANG WAJIB DICEK ======
 EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
-ROOT_PART="/dev/nvme0n1p2"    # Root (BTRFS)
+SWAP_PART="/dev/nvme0n1p2"    # Swap Partisi
+ROOT_PART="/dev/nvme0n1p3"    # Root (BTRFS)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
 ROOT_PASS="password"
@@ -37,8 +38,11 @@ if [[ "$FORMAT_EFI" == "true" ]]; then
   mkfs.fat -F32 -n ESP "$EFI_PART"
 fi
 
+echo "[+] Format Partisi SWAP di $SWAP_PART"
+mkswap -L Swap "$SWAP_PART"
+
 echo "[+] Format BTRFS di $ROOT_PART"
-mkfs.btrfs -f -L ArchLinux "$ROOT_PART"
+mkfs.btrfs -L ArchLinux "$ROOT_PART"
 
 # ====== LAYOUT SUBVOLUME ======
 mount "$ROOT_PART" /mnt
@@ -61,10 +65,13 @@ mount -o ${MNT_OPTS},subvol=@tmp "$ROOT_PART" /mnt/var/tmp
 # ESP di-mount ke /boot
 mount "$EFI_PART" /mnt/boot
 
+# AKtikan Partisi Swap
+swapon "$SWAP_PART"
+
 # ====== MIRRORLIST (host/live environment) ======
 echo "[+] Atur mirror archlinux (host)"
 pacman -Sy --noconfirm reflector
-reflector --country Singapore --country Indonesia --age 6 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorlist
 
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
@@ -164,12 +171,13 @@ mkinitcpio -P
 
 # (Opsional) mirrorlist di sistem terpasang
 pacman -Sy --noconfirm reflector
-reflector --country Indonesia --age 6 --sort rate --save /etc/pacman.d/mirrorlist || true
+reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorlist || true
 EOF
 
 # ====== BERESKAN ======
 echo "[+] Unmount & matikan"
 umount -R /mnt
+swapoff "$SWAP_PART"
 trap - EXIT
 
 # Ganti ke 'reboot' jika ingin restart
