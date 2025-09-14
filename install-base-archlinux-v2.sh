@@ -11,10 +11,10 @@ set -Eeuo pipefail
 # ====== KONFIGURASI YANG WAJIB DICEK ======
 EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 ROOT_PART="/dev/nvme0n1p2"    # Root (BTRFS)
-HOSTNAME="archlinux-pc"
+HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
-ROOT_PASS="r!N4@O50689#25"
-USER_PASS="050689"
+ROOT_PASS="password"
+USER_PASS="password"
 
 # Opsi format partisi (ubah ke true/false sesuai kebutuhan)
 FORMAT_EFI=true         # true jika ingin format ulang ESP
@@ -70,9 +70,7 @@ reflector --country Singapore --country Indonesia --age 6 --sort rate --save /et
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode \
-  btrfs-progs iwd sudo neovim reflector firewalld bash \
-  plasma-desktop konsole sddm \
-  pipewire pipewire-pulse wireplumber pipewire-alsa pipewire-jack alsa-utils rtkit sof-firmware plasma-pa
+  btrfs-progs iwd sudo neovim reflector firewalld
 
 # Fstab gunakan UUID
 genfstab -U /mnt > /mnt/etc/fstab
@@ -160,14 +158,13 @@ systemctl enable systemd-networkd.service
 systemctl enable systemd-resolved.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
-systemctl enable sddm.service
 
 # Pastikan initramfs up-to-date
 mkinitcpio -P
 
 # (Opsional) mirrorlist di sistem terpasang
 pacman -Sy --noconfirm reflector
-reflector --country Singapore --country Indonesia --age 6 --sort rate --save /etc/pacman.d/mirrorlist || true
+reflector --country Indonesia --age 6 --sort rate --save /etc/pacman.d/mirrorlist || true
 EOF
 
 # ====== BERESKAN ======
