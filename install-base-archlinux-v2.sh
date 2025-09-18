@@ -71,12 +71,12 @@ swapon "$SWAP_PART"
 # ====== MIRRORLIST (host/live environment) ======
 echo "[+] Atur mirror archlinux (host)"
 pacman -Sy --noconfirm reflector
-reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country Singapore --country China --age 6 --sort rate --save /etc/pacman.d/mirrorlist
 
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
-  base base-devel linux linux-firmware intel-ucode \
+  base linux linux-firmware intel-ucode \
   btrfs-progs iwd sudo neovim reflector firewalld
   
 # Fstab gunakan UUID
@@ -171,7 +171,7 @@ mkinitcpio -P
 
 # (Opsional) mirrorlist di sistem terpasang
 pacman -Sy --noconfirm reflector
-reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorlist || true
+reflector --country Singapore --country China --age 6 --sort rate --save /etc/pacman.d/mirrorlist || true
 EOF
 
 # ====== BERESKAN ======
