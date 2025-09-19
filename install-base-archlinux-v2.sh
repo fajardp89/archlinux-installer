@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-###############################################
-# Arch Linux Auto Install (BTRFS + systemd-boot)
-# - Wi‑Fi via iwd
-# - IP/DNS via systemd-networkd + systemd-resolved
-# - ESP di-mount ke /boot
-###############################################
-
 # ====== KONFIGURASI YANG WAJIB DICEK ======
 EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 SWAP_PART="/dev/nvme0n1p2"    # Swap Partisi
@@ -56,14 +49,14 @@ umount /mnt
 # ====== MOUNT DENGAN OPSI YANG BAIK ======
 MNT_OPTS="noatime,compress=zstd,ssd,discard=async,space_cache=v2"
 mount -o ${MNT_OPTS},subvol=@ "$ROOT_PART" /mnt
-mkdir -p /mnt/{home,boot,var/log,var/cache,var/tmp}
+mkdir -p /mnt/{home,boot/efi,var/log,var/cache,var/tmp}
 mount -o ${MNT_OPTS},subvol=@home "$ROOT_PART" /mnt/home
 mount -o ${MNT_OPTS},subvol=@log "$ROOT_PART" /mnt/var/log
 mount -o ${MNT_OPTS},subvol=@cache "$ROOT_PART" /mnt/var/cache
 mount -o ${MNT_OPTS},subvol=@tmp "$ROOT_PART" /mnt/var/tmp
 
 # ESP di-mount ke /boot
-mount "$EFI_PART" /mnt/boot
+mount "$EFI_PART" /mnt/boot/efi
 
 # AKtikan Partisi Swap
 swapon "$SWAP_PART"
