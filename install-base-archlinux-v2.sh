@@ -64,13 +64,13 @@ swapon "$SWAP_PART"
 # ====== MIRRORLIST (host/live environment) ======
 echo "[+] Atur mirror archlinux (host)"
 pacman -Sy --noconfirm reflector
-reflector --country Singapore --country China --age 6 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country Singapore --country China --age 6 --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base linux linux-firmware intel-ucode \
-  btrfs-progs iwd sudo neovim reflector firewalld
+  btrfs-progs networkmanager sudo neovim reflector firewalld
   
 # Fstab gunakan UUID
 genfstab -U /mnt > /mnt/etc/fstab
@@ -100,71 +100,29 @@ EOL
 
 echo "root:$ROOT_PASS" | chpasswd
 
-# ====== Bootloader: systemd-boot ======
-bootctl install
-cat >/boot/loader/loader.conf <<EOL
-default arch
-timeout 3
-editor 0
-console-mode 1
-EOL
-
-cat >/boot/loader/entries/arch.conf <<EOL
-title   Arch Linux
-linux   /vmlinuz-linux
-initrd  /intel-ucode.img
-initrd  /initramfs-linux.img
-options root=UUID=$ROOT_UUID rw rootflags=subvol=@
-EOL
-
-cat >/boot/loader/entries/arch-fallback.conf <<EOL
-title   Arch Linux (fallback)
-linux   /vmlinuz-linux
-initrd  /intel-ucode.img
-initrd  /initramfs-linux-fallback.img
-options root=UUID=$ROOT_UUID rw rootflags=subvol=@
-EOL
-
 # ====== User & sudo ======
 useradd -m -U -G wheel,audio,video,storage,optical,power,lp,scanner,ftp,http,sys,rfkill,tty,disk,input,network -s /bin/bash "$USERNAME"
 echo "$USERNAME:$USER_PASS" | chpasswd
 echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00-wheel
 chmod 0440 /etc/sudoers.d/00-wheel
 
-# ====== Networking: iwd + networkd/resolved ======
-mkdir -p /etc/systemd/network
-cat >/etc/systemd/network/20-wired.network <<EOL
-[Match]
-Name=en*
+# ====== Grub Bootloader ======
 
-[Network]
-DHCP=yes
-IPv6PrivacyExtensions=yes
-EOL
 
-cat >/etc/systemd/network/30-wlan.network <<EOL
-[Match]
-Name=wl*
 
-[Network]
-DHCP=yes
-IPv6PrivacyExtensions=yes
-EOL
 
-ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf || true
 
-systemctl enable iwd.service
-systemctl enable systemd-networkd.service
-systemctl enable systemd-resolved.service
+
+
+
+
+systemctl enable NetworkManager.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
 
-# Pastikan initramfs up-to-date
-mkinitcpio -P
-
 # (Opsional) mirrorlist di sistem terpasang
 pacman -Sy --noconfirm reflector
-reflector --country Singapore --country China --age 6 --sort rate --save /etc/pacman.d/mirrorlist || true
+reflector --country Singapore --country China --age 6 --latest 5 --sort rate --save /etc/pacman.d/mirrorlist || true
 EOF
 
 # ====== BERESKAN ======
