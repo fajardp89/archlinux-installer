@@ -70,13 +70,11 @@ reflector --country Singapore --country China --age 6 --latest 5 --sort rate --s
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base linux linux-firmware intel-ucode \
-  btrfs-progs networkmanager sudo neovim reflector firewalld
+  grub efibootmgr btrfs-progs networkmanager \
+  sudo neovim reflector firewalld
   
 # Fstab gunakan UUID
 genfstab -U /mnt > /mnt/etc/fstab
-
-# Ambil UUID root untuk entri boot
-ROOT_UUID=$(blkid -s UUID -o value "$ROOT_PART")
 
 # ====== KONFIGURASI DALAM CHROOT ======
 echo "[+] Konfigurasi dalam chroot"
@@ -107,14 +105,8 @@ echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00-wheel
 chmod 0440 /etc/sudoers.d/00-wheel
 
 # ====== Grub Bootloader ======
-
-
-
-
-
-
-
-
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ArchLinux
+grub-mkconfig -o /boot/grub/grub.cfg
 
 systemctl enable NetworkManager.service
 systemctl enable firewalld.service
