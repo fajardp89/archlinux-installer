@@ -2,10 +2,7 @@
 set -Eeuo pipefail
 
 ###############################################
-# Arch Linux Auto Install (BTRFS + systemd-boot)
-# - Wi‑Fi via iwd
-# - IP/DNS via systemd-networkd + systemd-resolved
-# - ESP di-mount ke /boot
+# Arch Linux Auto Install (XFS + systemd-boot)
 ###############################################
 
 # ====== KONFIGURASI YANG WAJIB DICEK ======
