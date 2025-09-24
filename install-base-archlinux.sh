@@ -83,14 +83,14 @@ locale-gen
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 echo "KEYMAP=us" > /etc/vconsole.conf
 mkdir -p /etc/X11/xorg.conf.d
-cat > /etc/X11/xorg.conf.d/00-keyboard.conf <<EOF
+cat > /etc/X11/xorg.conf.d/00-keyboard.conf <<EOKB
 Section "InputClass"
     Identifier "system-keyboard"
     MatchIsKeyboard "on"
     Option "XkbLayout" "us"
     Option "XkbModel" "pc105"
 EndSection
-EOF
+EOKB
 
 echo "$HOSTNAME" > /etc/hostname
 cat >/etc/hosts <<EOL
