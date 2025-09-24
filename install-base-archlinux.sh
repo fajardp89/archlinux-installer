@@ -11,7 +11,7 @@ SWAP_PART="/dev/nvme0n1p2"    # Swap Partisi
 ROOT_PART="/dev/nvme0n1p3"    # Root (BTRFS)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
-ROOT_PASS="r!N4@O50689"
+ROOT_PASS="r!N4@O50689#25"
 USER_PASS="050689"
 
 # Opsi format partisi (ubah ke true/false sesuai kebutuhan)
@@ -38,8 +38,8 @@ fi
 echo "[+] Format Partisi SWAP di $SWAP_PART"
 mkswap -L Swap "$SWAP_PART"
 
-echo "[+] Format BTRFS di $ROOT_PART"
-mkfs.btrfs -L ArchLinux "$ROOT_PART"
+echo "[+] Format XFS di $ROOT_PART"
+mkfs.xfs -L ArchLinux "$ROOT_PART"
 
 # ====== MOUNT PARTISI ======
 mount "$ROOT_PART" /mnt
@@ -60,7 +60,7 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux linux-firmware intel-ucode xfsprogs networkmanager \
-  sudo neovim reflector firewalld git plasma-desktop konsole sddm plasma-pa plasma-nm \
+  sudo neovim reflector firewalld git plasma-desktop konsole dolphin sddm plasma-pa plasma-nm \
   pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack alsa-utils rtkit sof-firmware
 
 # Fstab gunakan UUID
@@ -141,5 +141,5 @@ umount -R /mnt
 swapoff "$SWAP_PART"
 trap - EXIT
 
-# Ganti ke 'reboot' jika ingin restart
+# Ganti ke 'systemctl reboot' jika ingin restart
 systemctl poweroff
