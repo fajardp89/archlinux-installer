@@ -10,7 +10,8 @@ set -Eeuo pipefail
 
 # ====== KONFIGURASI YANG WAJIB DICEK ======
 EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
-ROOT_PART="/dev/nvme0n1p2"    # Root (BTRFS)
+SWAP_PART="/dev/nvme0n1p2"    # Swap Partisi
+ROOT_PART="/dev/nvme0n1p3"    # Root (BTRFS)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
 ROOT_PASS="r!N4@O50689"
@@ -37,33 +38,21 @@ if [[ "$FORMAT_EFI" == "true" ]]; then
   mkfs.fat -F32 -n ESP "$EFI_PART"
 fi
 
+echo "[+] Format Partisi SWAP di $SWAP_PART"
+mkswap -L Swap "$SWAP_PART"
+
 echo "[+] Format BTRFS di $ROOT_PART"
-mkfs.btrfs -f -L ArchLinux "$ROOT_PART"
+mkfs.btrfs -L ArchLinux "$ROOT_PART"
 
-# ====== LAYOUT SUBVOLUME ======
+# ====== MOUNT PARTISI ======
 mount "$ROOT_PART" /mnt
-btrfs subvolume create /mnt/@
-btrfs subvolume create /mnt/@home
-btrfs subvolume create /mnt/@root
-btrfs subvolume create /mnt/@srv
-btrfs subvolume create /mnt/@cache
-btrfs subvolume create /mnt/@tmp
-btrfs subvolume create /mnt/@log
-umount /mnt
-
-# ====== MOUNT DENGAN OPSI YANG BAIK ======
-MNT_OPTS="noatime,compress=zstd,ssd,discard=async,space_cache=v2"
-mount -o ${MNT_OPTS},subvol=@ "$ROOT_PART" /mnt
-mkdir -p /mnt/{home,root,srv,boot,var/cache,var/tmp,var/log}
-mount -o ${MNT_OPTS},subvol=@home  "$ROOT_PART" /mnt/home
-mount -o ${MNT_OPTS},subvol=@root  "$ROOT_PART" /mnt/root
-mount -o ${MNT_OPTS},subvol=@srv   "$ROOT_PART" /mnt/srv
-mount -o ${MNT_OPTS},subvol=@cache "$ROOT_PART" /mnt/var/cache
-mount -o ${MNT_OPTS},subvol=@tmp   "$ROOT_PART" /mnt/var/tmp
-mount -o ${MNT_OPTS},subvol=@log   "$ROOT_PART" /mnt/var/log
 
 # ESP di-mount ke /boot
+mkdir -p /mnt/boot
 mount "$EFI_PART" /mnt/boot
+
+# Aktikan Partisi Swap
+swapon "$SWAP_PART"
 
 # ====== MIRRORLIST (host/live environment) ======
 echo "[+] Atur mirror archlinux (host)"
@@ -73,8 +62,9 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
-  base base-devel linux linux-firmware intel-ucode \
-  btrfs-progs iwd sudo neovim reflector firewalld bash plasma-desktop konsole sddm
+  base base-devel linux linux-firmware intel-ucode xfsprogs networkmanager \
+  sudo neovim reflector firewalld git plasma-desktop konsole sddm plasma-pa plasma-nm \
+  pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack alsa-utils rtkit sof-firmware
 
 # Fstab gunakan UUID
 genfstab -U /mnt > /mnt/etc/fstab
@@ -104,6 +94,12 @@ EOL
 
 echo "root:$ROOT_PASS" | chpasswd
 
+# ====== User & sudo ======
+useradd -m -U -G wheel,audio,video,storage,optical,power,lp,scanner,ftp,http,sys,rfkill,tty,disk,input,network -s /bin/bash "$USERNAME"
+echo "$USERNAME:$USER_PASS" | chpasswd
+echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00-wheel
+chmod 0440 /etc/sudoers.d/00-wheel
+
 # ====== Bootloader: systemd-boot ======
 bootctl install
 cat >/boot/loader/loader.conf <<EOL
@@ -118,7 +114,7 @@ title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /intel-ucode.img
 initrd  /initramfs-linux.img
-options root=UUID=$ROOT_UUID rw rootflags=subvol=@
+options root=UUID=$ROOT_UUID rw
 EOL
 
 cat >/boot/loader/entries/arch-fallback.conf <<EOL
@@ -126,40 +122,10 @@ title   Arch Linux (fallback)
 linux   /vmlinuz-linux
 initrd  /intel-ucode.img
 initrd  /initramfs-linux-fallback.img
-options root=UUID=$ROOT_UUID rw rootflags=subvol=@
+options root=UUID=$ROOT_UUID rw
 EOL
 
-# ====== User & sudo ======
-useradd -m -U -G wheel,audio,video,storage,optical,power,lp,scanner,ftp,http,sys,rfkill,tty,disk,input,network -s /bin/bash "$USERNAME"
-echo "$USERNAME:$USER_PASS" | chpasswd
-echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00-wheel
-chmod 0440 /etc/sudoers.d/00-wheel
-
-# ====== Networking: iwd + networkd/resolved ======
-mkdir -p /etc/systemd/network
-cat >/etc/systemd/network/20-wired.network <<EOL
-[Match]
-Name=en*
-
-[Network]
-DHCP=yes
-IPv6PrivacyExtensions=yes
-EOL
-
-cat >/etc/systemd/network/30-wlan.network <<EOL
-[Match]
-Name=wl*
-
-[Network]
-DHCP=yes
-IPv6PrivacyExtensions=yes
-EOL
-
-ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf || true
-
-systemctl enable iwd.service
-systemctl enable systemd-networkd.service
-systemctl enable systemd-resolved.service
+systemctl enable NetworkManager.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
 systemctl enable sddm.service
@@ -175,6 +141,7 @@ EOF
 # ====== BERESKAN ======
 echo "[+] Unmount & matikan"
 umount -R /mnt
+swapoff "$SWAP_PART"
 trap - EXIT
 
 # Ganti ke 'reboot' jika ingin restart
