@@ -41,11 +41,22 @@ mkswap -L Swap "$SWAP_PART"
 echo "[+] Format XFS di $ROOT_PART"
 mkfs.xfs -L ArchLinux "$ROOT_PART"
 
-# ====== MOUNT PARTISI ======
+# ====== CREATE SUBVOLUME & MOUNT PARTISI ======
 mount "$ROOT_PART" /mnt
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@log
+btrfs subvolume create /mnt/@cache
+btrfs subvolume create /mnt/@tmp
+umount /mnt
+mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@ "$ROOT_PART" /mnt
+mkdir -p /mnt/{home,boot,var/log,var/cache,var/tmp}
+mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@home "$ROOT_PART" /mnt/home
+mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@log "$ROOT_PART" /mnt/var/log
+mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@cache "$ROOT_PART" /mnt/var/cache
+mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@tmp "$ROOT_PART" /mnt/var/tmp
 
 # ESP di-mount ke /boot
-mkdir -p /mnt/boot
 mount "$EFI_PART" /mnt/boot
 
 # Aktikan Partisi Swap
@@ -59,7 +70,7 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
-  base base-devel linux linux-firmware intel-ucode xfsprogs networkmanager \
+  base base-devel linux linux-firmware intel-ucode btrfsprogs networkmanager \
   sudo neovim reflector firewalld git sway foot swaybg swayidle swaylock brightnessctl \
   pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack alsa-utils rtkit sof-firmware
 
