@@ -2,13 +2,13 @@
 set -Eeuo pipefail
 
 ###############################################
-# Arch Linux Auto Install (XFS + systemd-boot)
+# Arch Linux Auto Install (btrfs + systemd-boot)
 ###############################################
 
 # ====== KONFIGURASI YANG WAJIB DICEK ======
 EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 SWAP_PART="/dev/nvme0n1p2"    # Swap Partisi
-ROOT_PART="/dev/nvme0n1p3"    # Root (XFS)
+ROOT_PART="/dev/nvme0n1p3"    # Root (btrfs)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
 ROOT_PASS="r!N4@O50689#25"
@@ -38,7 +38,7 @@ fi
 echo "[+] Format Partisi SWAP di $SWAP_PART"
 mkswap -L Swap "$SWAP_PART"
 
-echo "[+] Format XFS di $ROOT_PART"
+echo "[+] Format btrfs di $ROOT_PART"
 mkfs.xfs -L ArchLinux "$ROOT_PART"
 
 # ====== CREATE SUBVOLUME & MOUNT PARTISI ======
