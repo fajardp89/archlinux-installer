@@ -39,7 +39,7 @@ echo "[+] Format Partisi SWAP di $SWAP_PART"
 mkswap -L Swap "$SWAP_PART"
 
 echo "[+] Format btrfs di $ROOT_PART"
-mkfs.xfs -L ArchLinux "$ROOT_PART"
+mkfs.btrfs -L ArchLinux "$ROOT_PART"
 
 # ====== CREATE SUBVOLUME & MOUNT PARTISI ======
 mount "$ROOT_PART" /mnt
