@@ -60,7 +60,7 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux linux-firmware intel-ucode xfsprogs networkmanager \
-  sudo neovim reflector firewalld git sway foot \
+  sudo neovim reflector firewalld git sway foot swaybg swayidle swaylock brightnessctl \
   pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack alsa-utils rtkit sof-firmware
 
 # Fstab gunakan UUID
@@ -135,7 +135,6 @@ EOL
 systemctl enable NetworkManager.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
-systemctl enable sddm.service
 
 # Pastikan initramfs up-to-date
 mkinitcpio -P
