@@ -49,6 +49,7 @@ btrfs subvolume create /mnt/@log
 btrfs subvolume create /mnt/@cache
 btrfs subvolume create /mnt/@tmp
 umount /mnt
+
 mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@ "$ROOT_PART" /mnt
 mkdir -p /mnt/{home,boot,var/log,var/cache,var/tmp}
 mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@home "$ROOT_PART" /mnt/home
