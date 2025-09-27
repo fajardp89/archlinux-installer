@@ -45,7 +45,7 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base linux linux-firmware intel-ucode btrfs-progs networkmanager \
-  sudo neovim firewalld sway plasma-desktop konsole sddm plasma-nm plasma-pa \
+  sudo neovim firewalld plasma-desktop konsole sddm plasma-nm plasma-pa \
   pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack alsa-utils rtkit sof-firmware
 
 # Fstab gunakan UUID
