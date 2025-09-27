@@ -71,7 +71,7 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
-  base base-devel linux linux-firmware intel-ucode btrfsprogs networkmanager \
+  base base-devel linux linux-firmware intel-ucode btrfs-progs networkmanager \
   sudo neovim reflector firewalld git sway foot swaybg swayidle swaylock brightnessctl \
   pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack alsa-utils rtkit sof-firmware
 
