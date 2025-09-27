@@ -44,9 +44,10 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
-  base linux linux-firmware intel-ucode btrfs-progs networkmanager \
-  sudo neovim apparmor firewalld plasma-desktop konsole sddm plasma-nm plasma-pa \
-  pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack alsa-utils rtkit sof-firmware
+  base base-devel linux linux-firmware intel-ucode btrfs-progs networkmanager \
+  sudo neovim git apparmor firewalld plasma-desktop konsole sddm plasma-nm plasma-pa \
+  fastfetch gnupg kwalletmanager pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack \
+  alsa-utils rtkit sof-firmware
 
 # Fstab gunakan UUID
 genfstab -U /mnt > /mnt/etc/fstab
