@@ -44,8 +44,8 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 # ====== INSTALL BASE ======
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
-  base base-devel linux linux-firmware intel-ucode btrfs-progs networkmanager \
-  sudo neovim reflector firewalld git sway foot swaybg swayidle swaylock brightnessctl \
+  base linux linux-firmware intel-ucode btrfs-progs networkmanager \
+  sudo neovim firewalld sway plasma-desktop konsole sddm \
   pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack alsa-utils rtkit sof-firmware
 
 # Fstab gunakan UUID
@@ -56,7 +56,7 @@ ROOT_UUID=$(blkid -s UUID -o value "$ROOT_PART")
 
 # ====== KONFIGURASI DALAM CHROOT ======
 echo "[+] Konfigurasi dalam chroot"
-arch-chroot /mnt /bin/bash <<EOF
+arch-chroot /mnt <<EOF
 set -Eeuo pipefail
 
 timedatectl set-ntp true
@@ -106,7 +106,7 @@ title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /intel-ucode.img
 initrd  /initramfs-linux.img
-options root=UUID=$ROOT_UUID rw
+options root=UUID=$ROOT_UUID rw rootflags=subvol=@
 EOL
 
 cat >/boot/loader/entries/arch-fallback.conf <<EOL
@@ -114,19 +114,16 @@ title   Arch Linux (fallback)
 linux   /vmlinuz-linux
 initrd  /intel-ucode.img
 initrd  /initramfs-linux-fallback.img
-options root=UUID=$ROOT_UUID rw
+options root=UUID=$ROOT_UUID rw rootflags=subvol=@
 EOL
 
 systemctl enable NetworkManager.service
 systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
+systemctl enable sddm.service
 
 # Pastikan initramfs up-to-date
 mkinitcpio -P
-
-# (Opsional) mirrorlist di sistem terpasang
-pacman -Sy --noconfirm reflector
-reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorlist || true
 EOF
 
 # ====== BERESKAN ======
