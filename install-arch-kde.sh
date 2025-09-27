@@ -45,7 +45,7 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base linux linux-firmware intel-ucode btrfs-progs networkmanager \
-  sudo neovim firewalld plasma-desktop konsole sddm plasma-nm plasma-pa \
+  sudo neovim apparmor firewalld plasma-desktop konsole sddm plasma-nm plasma-pa \
   pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack alsa-utils rtkit sof-firmware
 
 # Fstab gunakan UUID
@@ -92,6 +92,8 @@ echo "$USERNAME:$USER_PASS" | chpasswd
 echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00-wheel
 chmod 0440 /etc/sudoers.d/00-wheel
 
+echo "apparmor" > /etc/modules-load.d/apparmor.conf
+
 # ====== Bootloader: systemd-boot ======
 bootctl install
 cat >/boot/loader/loader.conf <<EOL
@@ -106,7 +108,7 @@ title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /intel-ucode.img
 initrd  /initramfs-linux.img
-options root=UUID=$ROOT_UUID rw rootflags=subvol=@
+options root=UUID=$ROOT_UUID rw rootflags=subvol=@ lsm=landlock,lockdown,yama,integrity,apparmor,bpf
 EOL
 
 cat >/boot/loader/entries/arch-fallback.conf <<EOL
@@ -114,11 +116,12 @@ title   Arch Linux (fallback)
 linux   /vmlinuz-linux
 initrd  /intel-ucode.img
 initrd  /initramfs-linux-fallback.img
-options root=UUID=$ROOT_UUID rw rootflags=subvol=@
+options root=UUID=$ROOT_UUID rw rootflags=subvol=@ lsm=landlock,lockdown,yama,integrity,apparmor,bpf
 EOL
 
 systemctl enable NetworkManager.service
 systemctl enable firewalld.service
+systemctl enable apparmor.service
 systemctl enable systemd-timesyncd.service
 systemctl enable sddm.service
 
