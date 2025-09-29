@@ -121,8 +121,8 @@ options root=UUID=$ROOT_UUID rw rootflags=subvol=@ lsm=landlock,lockdown,yama,in
 EOL
 
 systemctl enable NetworkManager.service
-systemctl enable firewalld.service
 systemctl enable apparmor.service
+systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
 systemctl enable sddm.service
 
