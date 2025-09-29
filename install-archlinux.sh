@@ -9,6 +9,7 @@ set -Eeuo pipefail
 EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 SWAP_PART="/dev/nvme0n1p2"    # Swap Partisi
 ROOT_PART="/dev/nvme0n1p3"    # Root (btrfs)
+HOME_PART="/dev/nvme0n1p4"    # Home (btrfs)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
 ROOT_PASS="r!N4@O50689#25"
@@ -17,7 +18,6 @@ USER_PASS="050689"
 # ====== CREATE SUBVOLUME & MOUNT PARTISI ======
 mount "$ROOT_PART" /mnt
 btrfs subvolume create /mnt/@
-btrfs subvolume create /mnt/@home
 btrfs subvolume create /mnt/@log
 btrfs subvolume create /mnt/@cache
 btrfs subvolume create /mnt/@tmp
@@ -25,7 +25,7 @@ umount /mnt
 
 mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@ "$ROOT_PART" /mnt
 mkdir -p /mnt/{home,boot,var/log,var/cache,var/tmp}
-mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@home "$ROOT_PART" /mnt/home
+mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@home "$HOME_PART" /mnt/home
 mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@log "$ROOT_PART" /mnt/var/log
 mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@cache "$ROOT_PART" /mnt/var/cache
 mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@tmp "$ROOT_PART" /mnt/var/tmp
