@@ -25,7 +25,7 @@ umount /mnt
 
 mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@ "$ROOT_PART" /mnt
 mkdir -p /mnt/{home,boot,var/log,var/cache,var/tmp}
-mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@home "$HOME_PART" /mnt/home
+mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2 "$HOME_PART" /mnt/home
 mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@log "$ROOT_PART" /mnt/var/log
 mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@cache "$ROOT_PART" /mnt/var/cache
 mount -o noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@tmp "$ROOT_PART" /mnt/var/tmp
