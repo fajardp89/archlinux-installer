@@ -88,7 +88,7 @@ title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /intel-ucode.img
 initrd  /initramfs-linux.img
-options root=UUID=$ROOT_UUID rw lsm=landlock,lockdown,yama,integrity,apparmor,bpf
+options root=UUID=$ROOT_UUID rw rootflags=atgc lsm=landlock,lockdown,yama,integrity,apparmor,bpf
 EOL
 
 cat >/boot/loader/entries/arch-fallback.conf <<EOL
@@ -96,7 +96,7 @@ title   Arch Linux (fallback)
 linux   /vmlinuz-linux
 initrd  /intel-ucode.img
 initrd  /initramfs-linux-fallback.img
-options root=UUID=$ROOT_UUID rw lsm=landlock,lockdown,yama,integrity,apparmor,bpf
+options root=UUID=$ROOT_UUID rw rootflags=atgc lsm=landlock,lockdown,yama,integrity,apparmor,bpf
 EOL
 
 systemctl enable NetworkManager.service
