@@ -8,8 +8,8 @@ set -Eeuo pipefail
 # ====== KONFIGURASI YANG WAJIB DICEK ======
 EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 SWAP_PART="/dev/nvme0n1p2"    # Swap Partisi
-ROOT_PART="/dev/nvme0n1p3"    # Root (btrfs)
-HOME_PART="/dev/nvme0n1p4"    # Home (btrfs)
+ROOT_PART="/dev/nvme0n1p3"    # Root (f2fs)
+HOME_PART="/dev/nvme0n1p4"    # Home (f2fs)
 HOSTNAME="fajardp-archlinux-pc"
 USERNAME="fajar"
 ROOT_PASS="r!N4@O50689#25"
