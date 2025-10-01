@@ -100,9 +100,9 @@ options root=UUID=$ROOT_UUID rw lsm=landlock,lockdown,yama,integrity,apparmor,bp
 EOL
 
 systemctl enable NetworkManager.service
-systemctl enable apparmor.service
-systemctl enable firewalld.service
 systemctl enable systemd-timesyncd.service
+systemctl enable firewalld.service
+systemctl enable apparmor.service
 systemctl enable sddm.service
 
 # Pastikan initramfs up-to-date
