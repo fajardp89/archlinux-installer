@@ -10,10 +10,6 @@ EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 SWAP_PART="/dev/nvme0n1p2"    # Swap Partisi
 ROOT_PART="/dev/nvme0n1p3"    # Root (f2fs)
 HOME_PART="/dev/nvme0n1p4"    # Home (f2fs)
-HOSTNAME="fajardp-archlinux-pc"
-USERNAME="fajar"
-ROOT_PASS="r!N4@O50689#25"
-USER_PASS="050689"
 
 # ====== BUAT PARTISI ======
 mkfs.fat -F32 -n ESP "$EFI_PART"
