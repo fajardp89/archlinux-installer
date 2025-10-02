@@ -15,6 +15,23 @@ USERNAME="fajar"
 ROOT_PASS="r!N4@O50689#25"
 USER_PASS="050689"
 
+# ====== BUAT PARTISI ======
+mkfs.fat -F32 -n ESP "$EFI_PART"
+mkswap -L Swap "$SWAP_PART"
+mkfs.f2fs -l ArchLinux -O extra_attr,inode_checksum,sb_checksum,compression "$ROOT_PART"
+mkfs.f2fs -l Home -O extra_attr,inode_checksum,sb_checksum,compression "$HOME_PART"
+
+# ====== MOUNT PARTISI ======
+mount -o compress_algorithm=zstd:6,compress_chksum,atgc,gc_merge,lazytime /dev/nvme0n1p3 /mnt
+mkdir -p /mnt/{home,boot}
+mount -o compress_algorithm=zstd:6,compress_chksum,atgc,gc_merge,lazytime /dev/nvme0n1p4 /mnt/home
+
+# ESP di-mount ke /boot
+mount "$EFI_PART" /mnt/boot
+
+# Aktikan Partisi Swap
+swapon "$SWAP_PART"
+
 # ====== MIRRORLIST (host/live environment) ======
 echo "[+] Atur mirror archlinux (host)"
 pacman -Sy --noconfirm reflector
