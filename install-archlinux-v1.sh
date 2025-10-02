@@ -10,10 +10,7 @@ EFI_PART="/dev/nvme0n1p1"     # ESP (FAT32)
 SWAP_PART="/dev/nvme0n1p2"    # Swap Partisi
 ROOT_PART="/dev/nvme0n1p3"    # Root (btrfs)
 HOME_PART="/dev/nvme0n1p4"    # Home (btrfs)
-HOSTNAME="fajardp-archlinux-pc"
-USERNAME="fajar"
-ROOT_PASS="r!N4@O50689#25"
-USER_PASS="050689"
+
 
 # ====== CREATE SUBVOLUME & MOUNT PARTISI ======
 mount "$ROOT_PART" /mnt
