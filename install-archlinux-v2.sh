@@ -41,7 +41,7 @@ reflector --country Indonesia --age 24 --sort rate --save /etc/pacman.d/mirrorli
 echo "[+] pacstrap base system"
 pacstrap -K /mnt \
   base base-devel linux linux-firmware intel-ucode f2fs-tools networkmanager \
-  sudo neovim git reflector apparmor firewalld plasma-desktop konsole sddm plasma-nm plasma-pa \
+  sudo nano git reflector apparmor firewalld plasma-desktop konsole sddm plasma-nm plasma-pa \
   fastfetch gnupg kwalletmanager pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack \
   alsa-utils rtkit sof-firmware gtk2 gtk3 gtk4 kde-gtk-config breeze-gtk gparted
 
