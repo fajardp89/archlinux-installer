@@ -43,7 +43,7 @@ pacstrap -K /mnt \
   base base-devel linux linux-firmware intel-ucode f2fs-tools networkmanager \
   sudo neovim git reflector apparmor firewalld plasma-desktop konsole sddm plasma-nm plasma-pa \
   fastfetch gnupg kwalletmanager pipewire pipewire-pulse pipewire-alsa wireplumber pipewire-jack \
-  alsa-utils rtkit sof-firmware gtk2 gtk3 gtk4 kde-gtk-config
+  alsa-utils rtkit sof-firmware gtk2 gtk3 gtk4 kde-gtk-config breeze-gtk
 
 # Fstab gunakan UUID
 genfstab -U /mnt >> /mnt/etc/fstab
