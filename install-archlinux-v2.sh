@@ -22,9 +22,9 @@ mkfs.f2fs -l ArchLinux -O extra_attr,inode_checksum,sb_checksum,compression "$RO
 mkfs.f2fs -l Home -O extra_attr,inode_checksum,sb_checksum,compression "$HOME_PART"
 
 # ====== MOUNT PARTISI ======
-mount -o compress_algorithm=zstd:6,compress_chksum,atgc,gc_merge,lazytime /dev/nvme0n1p3 /mnt
+mount -o compress_algorithm=zstd:6,compress_chksum,atgc,gc_merge,lazytime "$ROOT_PART" /mnt
 mkdir -p /mnt/{home,boot}
-mount -o compress_algorithm=zstd:6,compress_chksum,atgc,gc_merge,lazytime /dev/nvme0n1p4 /mnt/home
+mount -o compress_algorithm=zstd:6,compress_chksum,atgc,gc_merge,lazytime "$HOME_PART" /mnt/home
 
 # ESP di-mount ke /boot
 mount "$EFI_PART" /mnt/boot
